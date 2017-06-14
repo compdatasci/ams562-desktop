@@ -1,0 +1,18 @@
+"*":
+  "autocomplete-python":
+    useKite: false
+  core:
+    telemetryConsent: "no"
+  "git-plus":
+    experimental:
+      useSplitDiff: true
+  "linter-flake8":
+    maxLineLength: 100
+  "python-autopep8":
+    maxLineLength: 79
+  "split-diff":
+    ignoreWhitespace: false
+    syncHorizontalScroll: true
+  welcome:
+    showOnStartup: false
+
