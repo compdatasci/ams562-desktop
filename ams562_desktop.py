@@ -26,7 +26,7 @@ def parse_args(description):
 
     parser.add_argument('-u', "--user",
                         help='The username used by the image. ' +
-                        ' The default is to retrieve from image.',
+                        'The default is ubuntu.',
                         default="")
 
     parser.add_argument('-i', '--image',
@@ -182,6 +182,10 @@ if __name__ == "__main__":
             print('Then, log out and log back in before you can use Docker.')
             sys.exit(-1)
         uid = str(os.getuid())
+        if uid == '0':
+            print('You are running as root. This is not safe. ' +
+                  'Please run as a standard user.')
+            sys.exit(-1)
     else:
         uid = ""
 
@@ -216,6 +220,7 @@ if __name__ == "__main__":
         os.mkdir(homedir + "/.ssh")
 
     if args.user:
+        user = args.user
         docker_home = "/home/" + args.user
     else:
         docker_home = subprocess.check_output(["docker", "run", "--rm",
@@ -231,10 +236,10 @@ if __name__ == "__main__":
 
     if args.reset:
         subprocess.check_output(["docker", "volume", "rm", "-f",
-                                 APP+"_config"])
+                                 APP + "_config"])
 
     volumes = ["-v", pwd + ":" + docker_home + "/shared",
-               "-v", APP+"_config:" + docker_home + "/.config",
+               "-v", APP + "_config:" + docker_home + "/.config",
                "-v", homedir + "/.ssh" + ":" + docker_home + "/.ssh",
                "-v", homedir + "/.gitconfig" +
                ":" + docker_home + "/.gitconfig"]
