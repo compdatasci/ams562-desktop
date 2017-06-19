@@ -49,7 +49,6 @@ RUN add-apt-repository ppa:webupd8team/atom && \
 # Customization for user
 ########################################################
 
-ENV EDITOR=atom
 ADD config/atom $DOCKER_HOME/.config/atom
 RUN chown -R $DOCKER_USER:$DOCKER_GROUP $DOCKER_HOME/.config
 USER $DOCKER_USER
