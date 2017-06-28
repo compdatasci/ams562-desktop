@@ -26,7 +26,7 @@ script:
   - '[[ "$TRAVIS_EVENT_TYPE" == "push" && -n "$TRAVIS_COMMIT_RANGE" &&
         -n $(git log --since $(docker inspect $BASE | grep Created | perl -e "s/.+\"([\d-:T]+).+$/\$1/g" -p)) &&
         -z "$(git diff --name-only $TRAVIS_COMMIT_RANGE |
-            grep -e Dockerfile -e .travis.yml -e config)" ]] || [[ "$XVFB" != "1" ]] ||
+            grep -e Dockerfile -e .travis.yml -e config -e WELCOME)" ]] || [[ "$XVFB" != "1" ]] ||
      (docker build --tag ams562/desktop:$VERSION
                    --tag ams562/desktop:latest . &&
       docker push ams562/desktop &&

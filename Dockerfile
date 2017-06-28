@@ -51,7 +51,7 @@ RUN add-apt-repository ppa:webupd8team/atom && \
 
 ENV GIT_EDITOR=vi EDITOR=atom
 ADD config/atom $DOCKER_HOME/.config/atom
-ADD WELCOME $DOCKER_HOME/WELCOME
+COPY WELCOME $DOCKER_HOME/WELCOME
 RUN chown -R $DOCKER_USER:$DOCKER_GROUP $DOCKER_HOME/.config
 USER $DOCKER_USER
 RUN echo 'export OMP_NUM_THREADS=$(nproc)' >> $DOCKER_HOME/.profile && \
