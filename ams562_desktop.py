@@ -35,8 +35,9 @@ def parse_args(description):
                         default="latest")
 
     parser.add_argument('-v', '--volume',
-                        help='A data volume to be mounted to ~/project.',
-                        default="")
+                        help='A data volume to be mounted at ~/' + APP + '. ' +
+                        'The default is ' + APP + '_project.',
+                        default=APP + "_project")
 
     parser.add_argument('-p', '--pull',
                         help='Pull the latest Docker image. ' +
@@ -46,6 +47,11 @@ def parse_args(description):
 
     parser.add_argument('-r', '--reset',
                         help='Reset configurations to default.',
+                        action='store_true',
+                        default=False)
+
+    parser.add_argument('-c', '--clear',
+                        help='Clear the source tree and use the precompiled version in image.',
                         action='store_true',
                         default=False)
 
@@ -248,10 +254,13 @@ if __name__ == "__main__":
                          "$DOCKER_HOME/.config/git/config)"])
 
     if args.volume:
-        volumes += ["-v", args.volume + ":" + docker_home + "/project",
-                    "-w", docker_home + "/project"]
-    else:
-        volumes += ["-w", docker_home + "/shared"]
+        if args.clear:
+            subprocess.call(["docker", "volume",
+                             "rm", "-f", args.volume])
+
+        volumes += ["-v", args.volume + ":" + docker_home + "/project"]
+
+    volumes += ["-w", docker_home + "/shared"]
     print("Starting up docker image...")
     if subprocess.check_output(["docker", "--version"]). \
             find(b"Docker version 1.") >= 0:
