@@ -1,6 +1,7 @@
 Welcome to the Docker image for AMS 562: Introduction to Scientific Programming
 in C++ at Stony Brook University. This image is based on Ubuntu 16.04, and it
 has g++-5.4, g++-7.1, Atom, LAPACK, ddd, valgrind, and mpich2 preinstalled.
+
 Please save your code and data into the ~/shared or ~/project directories.
 The former maps to the current work directory on your computer. The latter
 maps to a Docker data volume named ams562_project on your host.
