@@ -51,7 +51,7 @@ def parse_args(description):
                         default=False)
 
     parser.add_argument('-c', '--clear',
-                        help='Clear the source tree and use the precompiled version in image.',
+                        help='Clear the project data volume (please use with caution).',
                         action='store_true',
                         default=False)
 
