@@ -234,8 +234,8 @@ if __name__ == "__main__":
     user = docker_home[6:]
 
     if args.reset:
-        subprocess.check_output(["docker", "volume", "rm", "-f",
-                                 APP + "_config"])
+        subprocess.call(["docker", "volume", "rm", "-f",
+                         APP + "_config"])
 
     volumes = ["-v", pwd + ":" + docker_home + "/shared",
                "-v", APP + "_config:" + docker_home + "/.config",
