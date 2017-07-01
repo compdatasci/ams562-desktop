@@ -251,8 +251,11 @@ if __name__ == "__main__":
 
     if args.volume:
         if args.clear:
-            subprocess.call(["docker", "volume",
-                             "rm", "-f", args.volume])
+            try:
+                output = subprocess.check_output(["docker", "volume",
+                                                  "rm", "-f", args.volume])
+            except subprocess.CalledProcessError as e:
+                sys.stderr.write(e.output.decode('utf-8'))
 
         volumes += ["-v", args.volume + ":" + docker_home + "/project"]
 
