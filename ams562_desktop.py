@@ -80,7 +80,10 @@ def parse_args(description):
     args = parser.parse_args()
     # Append tag to image if the image has no tag
     if args.image.find(':') < 0:
-        args.image += ':' + args.tag
+        if not args.tag:
+            pass
+        else:
+            args.image += ':' + args.tag
 
     return args
 
@@ -122,7 +125,7 @@ def find_free_port(port, retries):
         except socket.error:
             continue
 
-    print("Error: Could not find a free port.")
+    sys.stderr.write("Error: Could not find a free port.\n")
     sys.exit(-1)
 
 
@@ -141,7 +144,7 @@ def wait_net_service(port, timeout=30):
             continue
         else:
             sock.close()
-            time.sleep(2)
+            time.sleep(3)
             return True
 
 
@@ -204,8 +207,8 @@ if __name__ == "__main__":
     try:
         img = subprocess.check_output(['docker', 'images', '-q', args.image])
     except:
-        print("Docker failed. Please make sure docker was properly " +
-              "installed and has been started.")
+        sys.stderr.write("Docker failed. Please make sure docker was properly " +
+                         "installed and has been started.\n")
         sys.exit(-1)
 
     if args.pull or not img:
@@ -227,31 +230,24 @@ if __name__ == "__main__":
     if not os.path.exists(homedir + "/.ssh"):
         os.mkdir(homedir + "/.ssh")
 
-    docker_home = subprocess.check_output(["docker", "run", "--rm",
-                                           args.image,
-                                           "echo $DOCKER_HOME"]). \
-        decode('utf-8')[:-1]
-    user = docker_home[6:]
+    user = "ubuntu"
+    docker_home = "/home/ubuntu"
 
     if args.reset:
-        subprocess.call(["docker", "volume", "rm", "-f",
-                         APP + "_config"])
+        try:
+            output = subprocess.check_output(["docker", "volume", "rm", "-f",
+                                              APP + args.tag + "_config"])
+        except subprocess.CalledProcessError as e:
+            sys.stderr.write(e.output.decode('utf-8'))
 
     volumes = ["-v", pwd + ":" + docker_home + "/shared",
-               "-v", APP + "_config:" + docker_home + "/.config",
+               "-v", APP + args.tag + "_config:" + docker_home + "/.config",
                "-v", homedir + "/.ssh" + ":" + docker_home + "/.ssh"]
 
-    # Copy .gitconfig if exists on host and is newer than that in image
+    # Mount .gitconfig to Docker image
     if os.path.isfile(homedir + "/.gitconfig"):
-        subprocess.call(["docker", "run", "--rm"] + volumes +
-                        ["-v", homedir + "/.gitconfig" +
-                         ":" + docker_home + "/.gitconfig_host",
-                         args.image,
-                         "[[ $DOCKER_HOME/.config/git/config -nt " +
-                         "$DOCKER_HOME/.gitconfig_host ]] || " +
-                         "(mkdir -p $DOCKER_HOME/.config/git && " +
-                         "sudo cp $DOCKER_HOME/.gitconfig_host " +
-                         "$DOCKER_HOME/.config/git/config)"])
+        volumes += ["-v", homedir + "/.gitconfig" +
+                    ":" + docker_home + "/.gitconfig_host"]
 
     if args.volume:
         if args.clear:
@@ -261,7 +257,7 @@ if __name__ == "__main__":
         volumes += ["-v", args.volume + ":" + docker_home + "/project"]
 
     volumes += ["-w", docker_home + "/shared"]
-    print("Starting up docker image...")
+    sys.stderr.write("Starting up docker image...\n")
     if subprocess.check_output(["docker", "--version"]). \
             find(b"Docker version 1.") >= 0:
         rmflag = "-t"
@@ -286,9 +282,11 @@ if __name__ == "__main__":
             "--env", "HOST_UID=" + uid]
 
     # Start the docker image in the background and pipe the stderr
-    port_vnc = str(find_free_port(6080, 50))
+    port_http = str(find_free_port(6080, 50))
+    port_vnc = str(find_free_port(5950, 50))
     subprocess.call(["docker", "run", "-d", rmflag, "--name", container,
-                     "-p", "127.0.0.1:" + port_vnc + ":6080"] +
+                     "-p", "127.0.0.1:" + port_http + ":6080",
+                     "-p", "127.0.0.1:" + port_vnc + ":5900"] +
                     envs + volumes + args.args +
                     ['--security-opt', 'seccomp=unconfined',
                      args.image, "startvnc.sh >> " +
@@ -320,11 +318,17 @@ if __name__ == "__main__":
                     if ind >= 0:
                         # Open browser if found URL
                         url = stdout_line.replace(":6080/",
-                                                  ':' + port_vnc + "/")
+                                                  ':' + port_http + "/")
                         sys.stdout.write(url)
 
+                        passwd = stdout_line[url.find('password=') + 9:]
+                        sys.stdout.write("\nFor a better user experience, use a VNC client " +
+                                         "(such as VNC Viewer for Google Chrome)\nto connect " +
+                                         "to localhost:%s with password %s\n" %
+                                         (port_vnc, passwd))
+
                         if not args.no_browser:
-                            wait_net_service(int(port_vnc))
+                            wait_net_service(int(port_http))
                             webbrowser.open(url[ind:-1])
 
                         p.stdout.close()
@@ -350,9 +354,14 @@ if __name__ == "__main__":
                 if not subprocess.check_output(['docker', 'ps',
                                                 '-q', '-f',
                                                 'name=' + container]):
-                    print('Docker container is no longer running')
+                    sys.stderr.write('Docker container is no longer running\n')
                     sys.exit(-1)
-                time.sleep(1)
+                else:
+                    time.sleep(1)
+                    continue
+            except subprocess.CalledProcessError:
+                sys.stderr.write('Docker container is no longer running\n')
+                sys.exit(-1)
             except KeyboardInterrupt:
                 handle_interrupt(container)
 

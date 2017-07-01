@@ -11,6 +11,8 @@ LABEL maintainer "Xiangmin Jiao <xmjiao@gmail.com>"
 USER root
 WORKDIR /tmp
 
+ADD image/home $DOCKER_HOME/
+
 # Install system packages
 RUN add-apt-repository ppa:webupd8team/atom && \
     add-apt-repository ppa:jonathonf/gcc-7.1 && \
@@ -43,6 +45,7 @@ RUN add-apt-repository ppa:webupd8team/atom && \
         atom \
         clang-format && \
     apt-get clean && \
+    echo "move_to_config atom" >> /usr/local/bin/init_vnc && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ########################################################
@@ -50,12 +53,9 @@ RUN add-apt-repository ppa:webupd8team/atom && \
 ########################################################
 
 ENV GIT_EDITOR=vi EDITOR=atom
-ADD config/atom $DOCKER_HOME/.config/atom
 COPY WELCOME $DOCKER_HOME/WELCOME
-RUN chown -R $DOCKER_USER:$DOCKER_GROUP $DOCKER_HOME/.config
-USER $DOCKER_USER
-RUN echo 'export OMP_NUM_THREADS=$(nproc)' >> $DOCKER_HOME/.profile && \
-    apm install \
+
+RUN apm install \
         language-cpp14 \
         language-matlab \
         language-fortran \
@@ -78,8 +78,9 @@ RUN echo 'export OMP_NUM_THREADS=$(nproc)' >> $DOCKER_HOME/.profile && \
         dbg-gdb \
         auto-detect-indentation \
         clang-format && \
-    ln -s -f $DOCKER_HOME/.config/atom/* $DOCKER_HOME/.atom && \
-    rm -rf /tmp/*
+    rm -rf /tmp/* && \
+    echo '@atom .' >> $DOCKER_HOME/.config/lxsession/LXDE/autostart && \
+    chown -R $DOCKER_USER:$DOCKER_GROUP $DOCKER_HOME
 
 WORKDIR $DOCKER_HOME
-USER root
+
