@@ -40,6 +40,7 @@ RUN add-apt-repository ppa:webupd8team/atom && \
         libmpich-dev \
         libopenblas-dev \
         mpich \
+        libomp-dev \
         \
         meld \
         atom \
@@ -84,4 +85,3 @@ RUN apm install \
     chown -R $DOCKER_USER:$DOCKER_GROUP $DOCKER_HOME
 
 WORKDIR $DOCKER_HOME
-
