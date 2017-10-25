@@ -25,6 +25,7 @@ RUN add-apt-repository ppa:webupd8team/atom && \
         cmake \
         bison \
         flex \
+        doxygen \
         git \
         bash-completion \
         bsdtar \
