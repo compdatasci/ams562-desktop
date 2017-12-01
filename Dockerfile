@@ -1,4 +1,4 @@
-# Builds a Docker image with Ubuntu 16.04, g++-5.4, g++-7.1, clang, Atom, LAPACK, ddd,
+# Builds a Docker image with Ubuntu 17.10, g++-7.2, clang, Atom, LAPACK, ddd,
 # valgrind, and mpich for "AMS 562: Introduction to Scientific Programming in C++"
 # at Stony Brook University
 #
@@ -15,12 +15,9 @@ ADD image/home $DOCKER_HOME/
 
 # Install system packages
 RUN add-apt-repository ppa:webupd8team/atom && \
-    add-apt-repository ppa:jonathonf/gcc-7.1 && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
         build-essential \
-        gcc-7 \
-        g++-7 \
         gfortran \
         cmake \
         bison \
@@ -38,6 +35,7 @@ RUN add-apt-repository ppa:webupd8team/atom && \
         ccache \
         \
         liblapack-dev \
+        liblapacke-dev \
         libmpich-dev \
         libopenblas-dev \
         mpich \
