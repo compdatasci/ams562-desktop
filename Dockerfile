@@ -15,12 +15,9 @@ ADD image/home $DOCKER_HOME/
 
 # Install system packages
 RUN add-apt-repository ppa:webupd8team/atom && \
-    add-apt-repository ppa:jonathonf/gcc-7.1 && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
         build-essential \
-        gcc-7 \
-        g++-7 \
         gfortran \
         cmake \
         bison \
@@ -37,6 +34,7 @@ RUN add-apt-repository ppa:webupd8team/atom && \
         ccache \
         \
         liblapack-dev \
+        liblapacke-dev \
         libmpich-dev \
         libopenblas-dev \
         mpich \
