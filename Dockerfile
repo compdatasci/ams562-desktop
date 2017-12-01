@@ -1,4 +1,4 @@
-# Builds a Docker image with Ubuntu 16.04, g++-5.4, g++-7.1, clang, Atom, LAPACK, ddd,
+# Builds a Docker image with Ubuntu 17.10, g++-7.2, clang, Atom, LAPACK, ddd,
 # valgrind, and mpich for "AMS 562: Introduction to Scientific Programming in C++"
 # at Stony Brook University
 #
