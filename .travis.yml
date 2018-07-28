@@ -23,5 +23,4 @@ script:
       docker push ams562/desktop &&
       touch success)'
   # Test script without launching webbrowser and push new image if successful
-  - './ams562_desktop.py -d -n && docker stop $(docker ps -q)'
   - docker images
