@@ -12,6 +12,8 @@ LABEL maintainer "Qiao Chen <benechiao@gmail.com>"
 USER root
 WORKDIR /tmp
 
+ARG JSON_VERSION=3.1.2
+
 # install dependencies
 RUN apt-get update && \
     git clone --depth 1 https://github.com/zeromq/libzmq.git && \
@@ -28,8 +30,9 @@ RUN git clone --depth 1 https://github.com/weidai11/cryptopp.git && \
     cp cmake/CMakeLists.txt . && \
     mkdir build && cd build && cmake .. && make -j2 && make install
 
-RUN git clone --depth 1 https://github.com/nlohmann/json.git && \
-    cd json && mkdir build && cd build && cmake .. && make -j2 && make install
+RUN wget -q https://github.com/nlohmann/json/archive/v$JSON_VERSION.tar.gz && \
+    tar xf v$JSON_VERSION.tar.gz && \
+    cd json-$JSON_VERSION && mkdir build && cd build && cmake .. && make -j2 && make install
 
 RUN git clone --depth 1 https://github.com/QuantStack/xtl.git && \
     cd xtl && mkdir build && cd build && cmake .. && make -j2 && make install
