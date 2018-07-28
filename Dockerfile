@@ -1,6 +1,5 @@
-# Builds a Docker image with Ubuntu 17.10, g++-7.2, clang, Atom, LAPACK, ddd,
-# valgrind, and mpich for "AMS 562: Introduction to Scientific Programming in C++"
-# at Stony Brook University
+# Image for "AMS 562: Introduction to Scientific Programming in C++" at Stony
+# Brook University
 #
 # Authors:
 # Xiangmin Jiao <xmjiao@gmail.com>
@@ -52,9 +51,9 @@ RUN mkdir -p /opt/cling && \
     pip3 install --no-cache-dir tqdm && \
     git clone https://github.com/chentinghao/download_google_drive.git && \
     cp download_google_drive/download_gdrive.py download_gdrive.py && \
-    python3 download_gdrive.py 10ECiK6qXeD31JwfqTqD_Dv-qpIw1dMNP build_cling.tar.xz && \
+    python3 download_gdrive.py 1Fq9u0NvpZG7DBVF1OAHZs_xKDMKBgM45 build_cling.tar.xz && \
     tar xf build_cling.tar.xz && \
-    cd build && \
+    cd cling/src/build && \
     make install && \
     ln -sf $CLING_ROOT/bin/cling /usr/local/bin/cling && \
     ln -sf $CLING_ROOT/include/llvm /usr/local/include/llvm && \
