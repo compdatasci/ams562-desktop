@@ -66,7 +66,7 @@ RUN mkdir -p /opt/cling && \
     ln -sf $CLING_ROOT/include/cling /usr/local/include/cling
 
 # install xeus-cling
-RUN git clong https://github.com/QuantStack/xeus-cling.git && \
+RUN git clone https://github.com/QuantStack/xeus-cling.git && \
     cd xeus-cling && \
     sed -i "s/\&copt_strings/(char\ **)\&copt_strings/g" src/xoptions.cpp && \
     mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/cling .. && \
