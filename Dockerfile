@@ -15,7 +15,7 @@ WORKDIR /tmp
 # install dependencies
 RUN apt-get update && \
     git clone --depth 1 https://github.com/zeromq/libzmq.git && \
-    cd libzmq && cmake . && make -j2 && make install
+    cd libzmq && mkdir build && cd build && cmake .. && make -j2 && make install
 
 RUN git clone --depth 1 https://github.com/zeromq/cppzmq.git && \
     cd cppzmq && mkdir build && cd build && cmake .. && make -j2 && make install
