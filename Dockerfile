@@ -58,7 +58,7 @@ RUN add-apt-repository ppa:webupd8team/atom && \
       setuptools \
       numpy \
       scipy \
-      sympy \
+      sympy==1.1.1 \
       pandas \
       matplotlib \
       sphinx \
