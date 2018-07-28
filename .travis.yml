@@ -5,7 +5,7 @@ services: docker
 
 env:
   global:
-    - BASE=x11vnc/desktop:latest VERSION=17F
+    - BASE=x11vnc/desktop:18.04 VERSION=base
 
 
 before_script:
@@ -19,8 +19,7 @@ script:
         -n $(git log --since $(docker inspect $BASE | grep Created | perl -e "s/.+\"([\d-:T]+).+$/\$1/g" -p)) &&
         -z "$(git diff --name-only $TRAVIS_COMMIT_RANGE |
             grep -e Dockerfile -e .travis.yml -e config -e WELCOME)" ]] ||
-     (docker build --tag ams562/desktop:$VERSION
-                   --tag ams562/desktop:latest . &&
+     (docker build --tag ams562/desktop:$VERSION . &&
       docker push ams562/desktop &&
       touch success)'
   # Test script without launching webbrowser and push new image if successful
