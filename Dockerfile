@@ -12,9 +12,11 @@ LABEL maintainer "Qiao Chen <benechiao@gmail.com>"
 USER root
 WORKDIR /tmp
 
+ADD image/home $DOCKER_HOME/
+
 # Install system packages
-RUN add-apt-repository ppa:webupd8team/atom && \
-    apt-get update && \
+RUN apt-get update && \
+    apt-get full-upgrade -y && \
     apt-get install -y --no-install-recommends \
         build-essential \
         gfortran \
@@ -23,6 +25,7 @@ RUN add-apt-repository ppa:webupd8team/atom && \
         flex \
         doxygen \
         git \
+        vim \
         bash-completion \
         bsdtar \
         rsync \
@@ -39,12 +42,13 @@ RUN add-apt-repository ppa:webupd8team/atom && \
         openmpi-bin \
         libomp-dev \
         meld \
-        atom \
         clang \
         clang-format \
         swig3.0 \
         python3-dev \
         python3-pip \
+        python \
+        python-dev \
         pandoc \
         libnss3 \
         libdpkg-perl \
@@ -52,6 +56,10 @@ RUN add-apt-repository ppa:webupd8team/atom && \
         debhelper \
         devscripts \
         gnupg \
+        uuid-dev \
+        libuuid1 \
+        uuid-runtime \
+        libboost-all-dev \
         && \
     apt-get clean && \
     pip3 install --no-cache-dir setuptools && \
@@ -90,6 +98,9 @@ RUN add-apt-repository ppa:webupd8team/atom && \
         https://bitbucket.org/ipre/calico/downloads/calico-cell-tools-1.0.zip && \
     jupyter-nbextension enable --system \
         calico-spell-check && \
+    git clone https://github.com/VundleVim/Vundle.vim.git $DOCKER_HOME/.vim/bundle/Vundle.vim && \
+    vim -c "PluginInstall" -c "quitall" && \
+    $DOCKER_HOME/.vim/bundle/YouCompleteMe/install.py --clang-completer --system-boost --system-libclang && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ########################################################
