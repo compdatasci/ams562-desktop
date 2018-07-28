@@ -17,7 +17,7 @@ ARG JSON_VERSION=3.1.2
 RUN apt-get update && \
     apt-get install -y \
       libffi-dev \
-      ilbxml2-dev \
+      libxml2-dev \
       && \
     git clone --depth 1 https://github.com/zeromq/libzmq.git && \
     cd libzmq && mkdir build && cd build && cmake .. && make -j2 && make install
