@@ -34,7 +34,7 @@ RUN git clone --depth 1 https://github.com/nlohmann/json.git && \
 RUN git clone --depth 1 https://github.com/QuantStack/xtl.git && \
     cd xtl && mkdir build && cd build && cmake .. && make -j2 && make install
 
-RUN git clone --depth 1 https://github.com/QuantStack/xeus.git && \
+RUN git clone https://github.com/QuantStack/xeus.git && \
     cd xeus && mkdir build && cd build && cmake .. && make -j2 && make install
 
 RUN git clone --depth 1 https://github.com/zeux/pugixml.git && \
@@ -60,7 +60,7 @@ RUN mkdir -p /opt/cling && \
     ln -sf $CLING_ROOT/include/cling /usr/local/include/cling
 
 # install xeus-cling
-RUN git clong --depth 1 https://github.com/QuantStack/xeus-cling.git && \
+RUN git clong https://github.com/QuantStack/xeus-cling.git && \
     cd xeus-cling && \
     sed -i "s/\&copt_strings/(char\ **)\&copt_strings/g" src/xoptions.cpp && \
     mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/cling .. && \
