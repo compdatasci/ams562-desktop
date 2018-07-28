@@ -5,7 +5,7 @@ services: docker
 
 env:
   global:
-    - BASE=x11vnc/desktop:18.04 VERSION=base
+    - BASE=ams562/desktop:base VERSION=cling
 
 
 before_script:

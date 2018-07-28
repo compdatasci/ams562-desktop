@@ -6,91 +6,38 @@
 # Xiangmin Jiao <xmjiao@gmail.com>
 # Qiao Chen <benechiao@gmail.com>
 
-FROM x11vnc/desktop:18.04
+FROM ams562/desktop:base
 LABEL maintainer "Qiao Chen <benechiao@gmail.com>"
 
 USER root
 WORKDIR /tmp
 
-# Install system packages
-RUN add-apt-repository ppa:webupd8team/atom && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends \
-        build-essential \
-        gfortran \
-        cmake \
-        bison \
-        flex \
-        doxygen \
-        git \
-        bash-completion \
-        bsdtar \
-        rsync \
-        wget \
-        gdb \
-        ddd \
-        valgrind \
-        electric-fence \
-        ccache \
-        libeigen3-dev \
-        libopenblas-dev \
-        liblapacke-dev \
-        libopenmpi-dev \
-        openmpi-bin \
-        libomp-dev \
-        meld \
-        atom \
-        clang \
-        clang-format \
-        swig3.0 \
-        python3-dev \
-        python3-pip \
-        pandoc \
-        libnss3 \
-        libdpkg-perl \
-        ttf-dejavu \
-        debhelper \
-        devscripts \
-        gnupg \
-        && \
-    apt-get clean && \
-    pip3 install --no-cache-dir setuptools && \
-    pip3 install --no-cache-dir \
-      numpy \
-      scipy \
-      sympy==1.1.1 \
-      pandas \
-      matplotlib \
-      sphinx \
-      cython \
-      autopep8 \
-      flake8 \
-      pylint \
-      flufl.lock \
-      ply \
-      pytest \
-      PyQt5 \
-      ipython \
-      jupyter \
-      jupyter_latex_envs \
-      ipywidgets && \
-    jupyter nbextension install --py --system \
-         widgetsnbextension && \
-    jupyter nbextension enable --py --system \
-         widgetsnbextension && \
-    jupyter-nbextension install --py --system \
-        latex_envs && \
-    jupyter-nbextension enable --py --system \
-        latex_envs && \
-    jupyter-nbextension install --system \
-        https://bitbucket.org/ipre/calico/downloads/calico-spell-check-1.0.zip && \
-    jupyter-nbextension install --system \
-        https://bitbucket.org/ipre/calico/downloads/calico-document-tools-1.0.zip && \
-    jupyter-nbextension install --system \
-        https://bitbucket.org/ipre/calico/downloads/calico-cell-tools-1.0.zip && \
-    jupyter-nbextension enable --system \
-        calico-spell-check && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# install dependencies
+RUN apt-get update && \
+    git clone --depth 1 https://github.com/zeromq/libzmq.git && \
+    cd libzmq && cmake . && make -j2 && make install
+
+RUN git clone --depth 1 https://github.com/zeromq/cppzmq.git && \
+    cd cppzmq && cmake . && make -j2 && make install
+
+# install crypto++ with cmake
+RUN git clone --depth 1 https://github.com/weidai11/cryptopp.git && \
+    cd cryptopp && \
+    git clone --depth 1 https://github.com/noloader/cryptopp-cmake.git cmake && \
+    cp cmake/cryptopp-config.cmake . && \
+    cp cmake/CMakeLists.txt . && \
+    cmake . && make -j2 && make install
+
+RUN git clone --depth 1 https://github.com/nlohmann/json.git && \
+    cd jason && cmake . && make -j2 && make install
+
+RUN git clone --depth 1 https://github.com/QuantStack/xtl.git && \
+    cd xtl && cmake . && make -j2 && make install
+
+RUN git clone --depth 1 https://github.com/QuantStack/xeus.git && \
+    cd xeus && cmake . && make -j2 && make install
+
+RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ########################################################
 # Customization for user
