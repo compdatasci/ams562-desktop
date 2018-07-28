@@ -29,13 +29,19 @@ RUN git clone --depth 1 https://github.com/weidai11/cryptopp.git && \
     mkdir build && cd build && cmake .. && make -j2 && make install
 
 RUN git clone --depth 1 https://github.com/nlohmann/json.git && \
-    cd jason && mkdir build && cd build && cmake .. && make -j2 && make install
+    cd json && mkdir build && cd build && cmake .. && make -j2 && make install
 
 RUN git clone --depth 1 https://github.com/QuantStack/xtl.git && \
     cd xtl && mkdir build && cd build && cmake .. && make -j2 && make install
 
 RUN git clone --depth 1 https://github.com/QuantStack/xeus.git && \
     cd xeus && mkdir build && cd build && cmake .. && make -j2 && make install
+
+RUN git clone --depth 1 https://github.com/zeux/pugixml.git && \
+    cd pugixml && mkdir build && cd build && cmake .. && make -j2 && make install
+
+RUN git clone --depth 1 https://github.com/jarro2783/cxxopts.git && \
+    cd cxxopts && mkdir build && cd build && cmake .. && make -j2 && make install
 
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
