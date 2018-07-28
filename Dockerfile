@@ -54,8 +54,8 @@ RUN add-apt-repository ppa:webupd8team/atom && \
         gnupg \
         && \
     apt-get clean && \
+    pip3 install --no-cache-dir setuptools && \
     pip3 install --no-cache-dir \
-      setuptools \
       numpy \
       scipy \
       sympy==1.1.1 \
