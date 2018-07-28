@@ -18,6 +18,7 @@ RUN apt-get update && \
     apt-get install -y \
       libffi-dev \
       libxml2-dev \
+      libtinfo-dev \
       && \
     git clone --depth 1 https://github.com/zeromq/libzmq.git && \
     cd libzmq && mkdir build && cd build && cmake .. && make -j2 && make install
