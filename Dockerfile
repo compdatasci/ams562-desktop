@@ -18,7 +18,7 @@ RUN apt-get update && \
     cd libzmq && cmake . && make -j2 && make install
 
 RUN git clone --depth 1 https://github.com/zeromq/cppzmq.git && \
-    cd cppzmq && cmake . && make -j2 && make install
+    cd cppzmq && mkdir build && cd build && cmake .. && make -j2 && make install
 
 # install crypto++ with cmake
 RUN git clone --depth 1 https://github.com/weidai11/cryptopp.git && \
@@ -26,16 +26,16 @@ RUN git clone --depth 1 https://github.com/weidai11/cryptopp.git && \
     git clone --depth 1 https://github.com/noloader/cryptopp-cmake.git cmake && \
     cp cmake/cryptopp-config.cmake . && \
     cp cmake/CMakeLists.txt . && \
-    cmake . && make -j2 && make install
+    mkdir build && cd build && cmake .. && make -j2 && make install
 
 RUN git clone --depth 1 https://github.com/nlohmann/json.git && \
-    cd jason && cmake . && make -j2 && make install
+    cd jason && mkdir build && cd build && cmake .. && make -j2 && make install
 
 RUN git clone --depth 1 https://github.com/QuantStack/xtl.git && \
-    cd xtl && cmake . && make -j2 && make install
+    cd xtl && mkdir build && cd build && cmake .. && make -j2 && make install
 
 RUN git clone --depth 1 https://github.com/QuantStack/xeus.git && \
-    cd xeus && cmake . && make -j2 && make install
+    cd xeus && mkdir build && cd build && cmake .. && make -j2 && make install
 
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
