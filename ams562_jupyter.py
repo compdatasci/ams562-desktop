@@ -232,14 +232,15 @@ if __name__ == "__main__":
                                      universal_newlines=True)
 
                 # Monitor the stdout to extract the URL
+                ptn = "http://(%s or 127.0.0.1):" % container
                 for stdout_line in iter(p.stdout.readline, ""):
-                    ind = stdout_line.find("http://0.0.0.0:")
+                    ind = stdout_line.find(ptn)
 
                     if ind >= 0:
                         # Open browser if found URL
                         if not args.notebook:
                             url = "http://localhost:" + \
-                                stdout_line[ind + 15:-1]
+                                stdout_line[ind + len(ptn):-1]
                         else:
                             url = "http://localhost:" + port_http + \
                                 "/notebooks/" + args.notebook + \
