@@ -3,7 +3,7 @@ This Docker image provides the Ubuntu 18.04 LTS environment with X Windows for t
 You can use this Docker image on 64-bit Linux, Mac or Windows. It allows you to use the same programming environment regardless which OS you are running on your laptop or desktop.
 
 ![screenshot](https://raw.github.com/compdatasci/ams562-desktop/master/screenshots/screenshot.png)
-![screenshot](https://raw.github.com/compdatasci/ams562-desktop/master/screenshots/notebook_demo.png)
+![screenshot](screenshots/notebook_demo.png)
 
 [![Build Status](https://travis-ci.org/compdatasci/ams562-desktop.svg?branch=master)](https://travis-ci.org/compdatasci/ams562-desktop) [![](https://images.microbadger.com/badges/image/ams562/desktop.svg)](https://microbadger.com/images/ams562/desktop)
 
