@@ -24,25 +24,33 @@ RUN apt-get update && \
     apt-get clean && \
     git clone --depth 1 https://github.com/zeromq/libzmq.git && \
     cd libzmq && mkdir build && cd build && cmake .. && make -j2 && make install && \
+    cd /tmp && \
     git clone --depth 1 https://github.com/zeromq/cppzmq.git && \
     cd cppzmq && mkdir build && cd build && cmake .. && make -j2 && make install && \
+    cd /tmp && \
     git clone --depth 1 https://github.com/weidai11/cryptopp.git && \
     cd cryptopp && \
     git clone --depth 1 https://github.com/noloader/cryptopp-cmake.git cmake && \
     cp cmake/cryptopp-config.cmake . && \
     cp cmake/CMakeLists.txt . && \
     mkdir build && cd build && cmake .. && make -j2 && make install && \
+    cd /tmp && \
     wget -q https://github.com/nlohmann/json/archive/v$JSON_VERSION.tar.gz && \
     tar xf v$JSON_VERSION.tar.gz && \
     cd json-$JSON_VERSION && mkdir build && cd build && cmake .. && make -j2 && make install && \
+    cd /tmp && \
     git clone --depth 1 https://github.com/QuantStack/xtl.git && \
     cd xtl && mkdir build && cd build && cmake .. && make -j2 && make install && \
+    cd /tmp && \
     git clone https://github.com/QuantStack/xeus.git && \
     cd xeus && mkdir build && cd build && cmake .. && make -j2 && make install && \
+    cd /tmp && \
     git clone --depth 1 https://github.com/zeux/pugixml.git && \
     cd pugixml && mkdir build && cd build && cmake .. && make -j2 && make install && \
+    cd /tmp && \
     git clone --depth 1 https://github.com/jarro2783/cxxopts.git && \
     cd cxxopts && mkdir build && cd build && cmake .. && make -j2 && make install && \
+    cd /tmp && \
     mkdir -p /opt/cling && \
     pip3 install --no-cache-dir tqdm && \
     git clone https://github.com/chentinghao/download_google_drive.git && \
@@ -56,6 +64,7 @@ RUN apt-get update && \
     ln -sf $CLING_ROOT/include/llvm-c /usr/local/include/llvm-c && \
     ln -sf $CLING_ROOT/include/clang /usr/local/include/clang && \
     ln -sf $CLING_ROOT/include/cling /usr/local/include/cling && \
+    cd /tmp && \
     git clone https://github.com/QuantStack/xeus-cling.git && \
     cd xeus-cling && \
     sed -i "s/\&copt_strings/(char\ **)\&copt_strings/g" src/xoptions.cpp && \
