@@ -205,7 +205,6 @@ if __name__ == "__main__":
             "--env", "HOST_UID=" + uid]
     # Start the docker image in the background and pipe the stderr
     subprocess.call(["docker", "run", "-d", rmflag, "--name", container,
-                     "--shm-size", "2gb",
                      "-p", "127.0.0.1:" + port_http + ":" + port_http] +
                     envs + volumes +
                     [args.image,
@@ -232,15 +231,14 @@ if __name__ == "__main__":
                                      universal_newlines=True)
 
                 # Monitor the stdout to extract the URL
-                ptn = "http://(%s or 127.0.0.1):" % container
                 for stdout_line in iter(p.stdout.readline, ""):
-                    ind = stdout_line.find(ptn)
+                    ind = stdout_line.find("%s/?token=" % port_http)
 
                     if ind >= 0:
                         # Open browser if found URL
                         if not args.notebook:
                             url = "http://localhost:" + \
-                                stdout_line[ind + len(ptn):-1]
+                                stdout_line[ind:-1]
                         else:
                             url = "http://localhost:" + port_http + \
                                 "/notebooks/" + args.notebook + \
