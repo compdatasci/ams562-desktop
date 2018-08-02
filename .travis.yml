@@ -9,6 +9,5 @@ before_script:
   - git clone --depth=1 https://$GIT_TOKEN@github.com/xmjiao/ci-util.git 2> /dev/null
 
 script:
-  - './ci-util/build-docker.sh : ams562/desktop:base
-         --build-arg BB_TOKEN=$BB_TOKEN --squash &&
+  - './ci-util/build-docker.sh : ams562/desktop:base --squash &&
      ./ci-util/trigger-via-api.sh'
