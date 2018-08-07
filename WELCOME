@@ -1,6 +1,6 @@
 Welcome to the Docker image for AMS 562: Intro. to Scientific Programming!
 
-This image is based on Ubuntu 18.04 LTS, with GCC-7.3, Atom, LAPACK, boost, vim,
+This image is based on Ubuntu 18.04 LTS, with GCC-7.3, VScode, LAPACK, boost, vim,
 ddd, valgrind, Eigen, OpenMPI, OpenMP, Jupyter, and xeus-cling, preinstalled.
 
 Please save your code and data into the ~/shared or ~/project directories.
