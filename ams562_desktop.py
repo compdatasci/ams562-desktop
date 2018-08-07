@@ -16,7 +16,7 @@ import time
 import os
 
 owner = "ams562"
-proj = os.path.basename(sys.argv[0]).split('_')[0]
+proj = "ams562"
 image = owner + '/' + "desktop"
 tag = ""
 projdir = "project"
