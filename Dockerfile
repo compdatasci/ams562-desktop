@@ -85,6 +85,7 @@ RUN apt-get update && \
     git clone https://github.com/VundleVim/Vundle.vim.git $DOCKER_HOME/.vim/bundle/Vundle.vim && \
     vim -c "PluginInstall" -c "quitall" && \
     $DOCKER_HOME/.vim/bundle/YouCompleteMe/install.py --clang-completer --system-boost --system-libclang && \
+    touch $DOCKER_HOME/.log/jupyer.log && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ########################################################
