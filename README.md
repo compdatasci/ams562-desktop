@@ -1,5 +1,5 @@
 # Docker Image for AMS 562
-This Docker image provides the Ubuntu 18.04 LTS environment with X Windows for the class "AMS 562: Introduction to Scientific Programming in C++" at Stony Brook University. The image runs the lightweight LXDE Windows Manager, and has `GCC-7.3`, `Atom`, `BLAS/LAPACK`, `valgrind`, `ddd`, `Eigen`, `boost`, `OpenMPI`, `OpenMP`, `Jupyter`, and `xeus-cling` preinstalled. The X Windows will display in your web browser in full-screen mode.
+This Docker image provides the Ubuntu 18.04 LTS environment with X Windows for the class "AMS 562: Introduction to Scientific Programming in C++" at Stony Brook University. The image runs the lightweight LXDE Windows Manager, and has `GCC-7.3`, `VScode`, `BLAS/LAPACK`, `valgrind`, `ddd`, `Eigen`, `boost`, `OpenMPI`, `OpenMP`, `Jupyter`, and `xeus-cling` preinstalled. The X Windows will display in your web browser in full-screen mode.
 You can use this Docker image on 64-bit Linux, Mac or Windows. It allows you to use the same programming environment regardless which OS you are running on your laptop or desktop.
 
 ![screenshot](https://raw.github.com/compdatasci/ams562-desktop/master/screenshots/screenshot.png)
