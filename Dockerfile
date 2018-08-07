@@ -1,12 +1,12 @@
-# Builds a Docker image with Ubuntu 17.10, g++-7.2, clang, Atom, LAPACK, ddd,
-# valgrind, and mpich for "AMS 562: Introduction to Scientific Programming in C++"
+# Builds a Docker image with Ubuntu 18.04, GCC-7.3, clang, vscode, LAPACK, ddd,
+# valgrind, OpenMPI, OpenMP, etc. for "AMS 562: Introduction to Scientific Programming in C++"
 # at Stony Brook University
 #
 # Authors:
 # Xiangmin Jiao <xmjiao@gmail.com>
 # Qiao Chen <benechiao@gmail.com>
 
-FROM x11vnc/desktop:18.04
+FROM compdatasci/vscode:latest
 LABEL maintainer "Qiao Chen <benechiao@gmail.com>"
 
 USER root
@@ -18,23 +18,13 @@ ADD image/home $DOCKER_HOME/
 RUN apt-get update && \
     apt-get full-upgrade -y && \
     apt-get install -y --no-install-recommends \
-        build-essential \
-        gfortran \
-        cmake \
-        bison \
-        flex \
         doxygen \
         git \
         vim \
-        bash-completion \
-        bsdtar \
-        rsync \
-        wget \
         gdb \
         ddd \
         valgrind \
         electric-fence \
-        ccache \
         libeigen3-dev \
         libopenblas-dev \
         liblapacke-dev \
@@ -45,8 +35,6 @@ RUN apt-get update && \
         clang \
         clang-format \
         swig3.0 \
-        python3-dev \
-        python3-pip \
         python \
         python-dev \
         pandoc \
@@ -62,7 +50,6 @@ RUN apt-get update && \
         libboost-all-dev \
         && \
     apt-get clean && \
-    pip3 install --no-cache-dir setuptools && \
     pip3 install --no-cache-dir \
       numpy \
       scipy \
@@ -70,13 +57,10 @@ RUN apt-get update && \
       pandas \
       matplotlib \
       sphinx \
+      sphinx_rtd_theme \
       cython \
-      autopep8 \
-      flake8 \
-      pylint \
       flufl.lock \
       ply \
-      pytest \
       PyQt5 \
       ipython \
       jupyter \
