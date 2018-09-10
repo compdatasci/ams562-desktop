@@ -20,7 +20,6 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         doxygen \
         git \
-        vim \
         gdb \
         ddd \
         valgrind \
@@ -82,9 +81,6 @@ RUN apt-get update && \
         https://bitbucket.org/ipre/calico/downloads/calico-cell-tools-1.0.zip && \
     jupyter-nbextension enable --system \
         calico-spell-check && \
-    git clone https://github.com/VundleVim/Vundle.vim.git $DOCKER_HOME/.vim/bundle/Vundle.vim && \
-    vim -c "PluginInstall" -c "quitall" && \
-    $DOCKER_HOME/.vim/bundle/YouCompleteMe/install.py --clang-completer --system-boost --system-libclang && \
     touch $DOCKER_HOME/.log/jupyer.log && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
