@@ -11,7 +11,7 @@ LABEL maintainer "Qiao Chen <benechiao@gmail.com>"
 USER root
 WORKDIR /tmp
 
-ARG JSON_VERSION=3.1.2
+ARG JSON_VERSION=3.2.0
 ENV CLING_ROOT=/opt/cling
 
 # install dependencies
