@@ -76,7 +76,8 @@ WORKDIR /tmp
 #     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # install jupyter and xeus-cling
-RUN conda install jupyter -y && conda install xeus-cling -c conda-forge && \
+RUN export PATH=${MINICONDA_ROOT}/bin:$PATH && \
+    conda install jupyter -y && conda install xeus-cling -c conda-forge && \
     hash jupyter && \
     jupyter nbextension install --py --system \	
          widgetsnbextension && \	
@@ -99,6 +100,6 @@ RUN conda install jupyter -y && conda install xeus-cling -c conda-forge && \
 # Customization for user
 ########################################################
 
-RUN chown -R $DOCKER_USER:$DOCKER_GROUP $DOCKER_HOME
+# RUN chown -R $DOCKER_USER:$DOCKER_GROUP $DOCKER_HOME
 
 WORKDIR $DOCKER_HOME
