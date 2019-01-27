@@ -15,9 +15,9 @@ WORKDIR /tmp
 ADD image/home $DOCKER_HOME/
 
 # Install system packages
-RUN apt-get update && \
-    apt-get full-upgrade -y && \
-    apt-get install -y --no-install-recommends \
+RUN apt update && \
+    apt upgrade -y && \
+    apt install -y --no-install-recommends \
         doxygen \
         git \
         gdb \
@@ -48,41 +48,18 @@ RUN apt-get update && \
         uuid-runtime \
         libboost-all-dev \
         && \
-    apt-get clean && \
-    pip3 install --no-cache-dir \
-      numpy \
-      scipy \
-      sympy==1.1.1 \
-      pandas \
-      matplotlib \
-      sphinx \
-      sphinx_rtd_theme \
-      cython \
-      flufl.lock \
-      ply \
-      PyQt5 \
-      ipython \
-      jupyter \
-      jupyter_latex_envs \
-      ipywidgets && \
-    jupyter nbextension install --py --system \
-         widgetsnbextension && \
-    jupyter nbextension enable --py --system \
-         widgetsnbextension && \
-    jupyter-nbextension install --py --system \
-        latex_envs && \
-    jupyter-nbextension enable --py --system \
-        latex_envs && \
-    jupyter-nbextension install --system \
-        https://bitbucket.org/ipre/calico/downloads/calico-spell-check-1.0.zip && \
-    jupyter-nbextension install --system \
-        https://bitbucket.org/ipre/calico/downloads/calico-document-tools-1.0.zip && \
-    jupyter-nbextension install --system \
-        https://bitbucket.org/ipre/calico/downloads/calico-cell-tools-1.0.zip && \
-    jupyter-nbextension enable --system \
-        calico-spell-check && \
-    touch $DOCKER_HOME/.log/jupyer.log && \
+    apt clean -y && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# install miniconda
+ENV MINICONDA_ROOT=/usr/local/miniconda
+RUN \
+    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
+    -O /tmp/miniconda.sh && \
+    bash /tmp/miniconda.sh -b -p ${MINICONDA_ROOT} && \
+    rm -f /tmp/miniconda.sh && \
+    touch $DOCKER_HOME/.log/jupyer.log && \
+    echo -e "PATH=${MINICONDA_ROOT}/bin:\$PATH" >> $DOCKER_HOME/.profile
 
 ########################################################
 # Customization for user
