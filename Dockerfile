@@ -63,6 +63,6 @@ RUN echo "export OMP_NUM_THREADS=\$(nproc)" >> $DOCKER_HOME/.profile && \
 USER $DOCKER_USER
 WORKDIR $DOCKER_HOME
 
-RUN code --install-extension ext install Shan.code-settings-sync
+RUN code --install-extension Shan.code-settings-sync
 
 WORKDIR $DOCKER_HOME
