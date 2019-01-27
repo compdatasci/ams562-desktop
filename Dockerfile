@@ -78,6 +78,7 @@ WORKDIR /tmp
 # install jupyter and xeus-cling
 RUN export PATH=${MINICONDA_ROOT}/bin:$PATH && \
     conda install jupyter -y && conda install xeus-cling -c conda-forge && \
+    conda install -c conda-forge jupyter_latex_envs -y && \
     hash jupyter && \
     jupyter nbextension install --py --system \	
          widgetsnbextension && \	
