@@ -59,7 +59,8 @@ RUN \
     bash /tmp/miniconda.sh -b -p ${MINICONDA_ROOT} && \
     rm -f /tmp/miniconda.sh && \
     touch $DOCKER_HOME/.log/jupyer.log && \
-    echo -e "PATH=${MINICONDA_ROOT}/bin:\$PATH" >> $DOCKER_HOME/.profile
+    echo -e "PATH=${MINICONDA_ROOT}/bin:\$PATH" >> $DOCKER_HOME/.profile && \
+    echo -e "PATH=${MINICONDA_ROOT}/bin:\$PATH" >> ~/.profile
 
 ########################################################
 # Customization for user
