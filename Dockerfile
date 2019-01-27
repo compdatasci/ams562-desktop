@@ -95,7 +95,8 @@ RUN export PATH=${MINICONDA_ROOT}/bin:$PATH && \
     jupyter-nbextension install --system \	
         https://bitbucket.org/ipre/calico/downloads/calico-cell-tools-1.0.zip && \	
     jupyter-nbextension enable --system \	
-        calico-spell-check
+        calico-spell-check && \
+    conda clean -a -y
 
 ########################################################
 # Customization for user
