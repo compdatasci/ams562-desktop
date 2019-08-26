@@ -65,4 +65,5 @@ WORKDIR $DOCKER_HOME
 
 RUN code --install-extension Shan.code-settings-sync
 
+USER root
 WORKDIR $DOCKER_HOME
