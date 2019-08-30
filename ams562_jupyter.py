@@ -366,8 +366,8 @@ if __name__ == "__main__":
         try:
             if wait_for_url:
                 # Wait until the file is not empty
-                while not subprocess.check_output(["docker", "exec", container,
-                                                   "cat", docker_home +
+                while subprocess.check_output(["docker", "exec", container,
+                                                   "test", "-e", docker_home +
                                                    "/.log/jupyter.log"]):
                     time.sleep(1)
 
