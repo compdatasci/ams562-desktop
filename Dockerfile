@@ -6,7 +6,7 @@
 # Xiangmin Jiao <xmjiao@gmail.com>
 # Qiao Chen <benechiao@gmail.com>
 
-FROM compdatasci/vscode-desktop:latest
+FROM x11vnc/vscode-desktop:latest
 LABEL maintainer "Qiao Chen <benechiao@gmail.com>"
 
 USER root
