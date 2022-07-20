@@ -1,4 +1,4 @@
-# Builds a Docker image with Ubuntu 18.04, GCC-7.3, clang, vscode, LAPACK, ddd,
+# Builds a Docker image with Ubuntu 22.04, GCC-11.2, clang, vscode, LAPACK, ddd,
 # valgrind, OpenMPI, OpenMP, etc. for "AMS 562: Introduction to Scientific Programming in C++"
 # at Stony Brook University
 #
