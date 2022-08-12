@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 """
 Launch Jupyter Notebook within a Docker notebook image and
 automatically open up the URL in the default web browser. It also
@@ -7,8 +6,6 @@ sets up port forwarding for ssh and X11 forwarding.
 """
 
 # Author: Xiangmin Jiao <xmjiao@gmail.com>
-
-from __future__ import print_function
 
 import sys
 import subprocess
@@ -22,7 +19,6 @@ tag = ""
 projdir = "project"
 workdir = "shared"
 volume = proj + "_project"
-config = proj + '_' + tag + '_config'
 
 
 def parse_args(description):
@@ -33,79 +29,100 @@ def parse_args(description):
     # Process command-line arguments
     parser = argparse.ArgumentParser(description=description)
 
-    parser.add_argument('-i', '--image',
-                        help='The Docker image to use. ' +
-                        'The default is ' + image + '.',
+    parser.add_argument('-i',
+                        '--image',
+                        help='The Docker image to use. ' + 'The default is ' +
+                        image + '.',
                         default=image)
 
-    parser.add_argument('-t', '--tag',
+    parser.add_argument('-t',
+                        '--tag',
                         help='Tag of the image. The default is latest. ' +
                         'If the image already has a tag, its tag prevails.',
                         default=tag)
 
-    parser.add_argument('-v', '--volume',
-                        help='A data volume to be mounted at ~/" + projdir + ". ' +
-                        'The default is ' + proj + '_project.',
-                        default=volume)
+    parser.add_argument(
+        '-v',
+        '--volume',
+        help='A data volume to be mounted at ~/" + projdir + ". ' +
+        'The default is ' + proj + '_project.',
+        default=volume)
 
-    parser.add_argument('-w', '--workdir',
+    parser.add_argument('-w',
+                        '--workdir',
                         help='The starting work directory in container. ' +
                         'The default is ~/' + workdir + '.',
                         default=workdir)
 
-    parser.add_argument('-p', '--pull',
+    parser.add_argument('-p',
+                        '--pull',
                         help='Pull the latest Docker image. ' +
                         'The default is not to pull.',
                         action='store_true',
                         default=False)
 
-    parser.add_argument('-r', '--reset',
+    parser.add_argument('-r',
+                        '--reset',
                         help='Reset configurations to default.',
                         action='store_true',
                         default=False)
 
-    parser.add_argument('-c', '--clear',
-                        help='Clear the project data volume (please use with caution).',
-                        action='store_true',
-                        default=False)
+    parser.add_argument(
+        '-c',
+        '--clear',
+        help='Clear the project data volume (please use with caution).',
+        action='store_true',
+        default=False)
 
-    parser.add_argument('-d', '--detach',
+    parser.add_argument('-d',
+                        '--detach',
                         help='Run in background and print container id',
                         action='store_true',
                         default=False)
 
-    parser.add_argument('-n', '--no-browser',
+    parser.add_argument('-n',
+                        '--no-browser',
                         help='Do not start web browser',
                         action='store_true',
                         default=False)
 
-    parser.add_argument('-N', '--nvidia',
+    parser.add_argument('-N',
+                        '--nvidia',
                         help='Mount the Nvidia card for GPU computation. ' +
                         '(Linux only, experimental, sudo required).',
                         action='store_true',
                         default="")
 
-    parser.add_argument('-V', '--verbose',
-                        help='Enable verbose mode and print debug info to stderr.',
-                        action='store_true',
-                        default=False)
+    parser.add_argument(
+        '-V',
+        '--verbose',
+        help='Enable verbose mode and print debug info to stderr.',
+        action='store_true',
+        default=False)
 
-    parser.add_argument('-q', '--quiet',
-                        help='Disable screen output (some Docker output cannot be disabled).',
-                        action='store_true',
-                        default=False)
+    parser.add_argument(
+        '-q',
+        '--quiet',
+        help='Disable screen output (some Docker output cannot be disabled).',
+        action='store_true',
+        default=False)
 
-    parser.add_argument('-A', '--args',
-                        help='Additional arguments for the "docker run" command. ' +
-                        'Useful for specifying additional resources or environment variables.',
-                        default="")
+    parser.add_argument(
+        '-A',
+        '--args',
+        help='Additional arguments for the "docker run" command. ' +
+        'Useful for specifying additional resources or environment variables.',
+        default="")
 
-    parser.add_argument('-J', '--jupyter',
+    parser.add_argument('-J',
+                        '--jupyter',
                         help='Additional arguments for jupyter-notebook.',
                         default="")
 
-    parser.add_argument('notebook', nargs='?',
-                        help='The notebook to open.', default="")
+    parser.add_argument('notebook',
+                        nargs='?',
+                        help='The notebook to open.',
+                        default="")
 
     args = parser.parse_args()
 
@@ -147,12 +164,14 @@ def get_local_ip():
     import socket
 
     # https://stackoverflow.com/questions/166506/finding-local-ip-addresses
-    return [l for l in ([ip for ip in
-                         socket.gethostbyname_ex(socket.gethostname())[2]
-                         if not ip.startswith("127.")][:1],
-                        [[(s.connect(('8.8.8.8', 53)), s.getsockname()[0], s.close())
-                          for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]])
-            if l][0][0]
+    return [
+        l for l in ([
+            ip for ip in socket.gethostbyname_ex(socket.gethostname())[2]
+            if not ip.startswith("127.")
+        ][:1], [[(s.connect(('8.8.8.8', 53)), s.getsockname()[0], s.close())
+                 for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]
+                 ][0][1]]) if l
+    ][0][0]
 
 
 def find_free_port(port, retries):
@@ -175,14 +194,14 @@ def find_free_port(port, retries):
 def handle_interrupt(container):
     """Handle keyboard interrupt"""
     try:
-        print("Press Ctrl-C again to stop the server: ")
+        print("Press Ctrl-C again to terminate the container: ")
         time.sleep(5)
         print('Invalid response. Resuming...')
     except KeyboardInterrupt:
         print('*** Stopping the server.')
-        subprocess.Popen(["docker", "exec", container,
-                          "killall", "my_init"],
-                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.Popen(["docker", "exec", container, "killall", "my_init"],
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE)
         sys.exit(0)
 
 
@@ -193,8 +212,10 @@ if __name__ == "__main__":
     import glob
 
     args = parse_args(description=__doc__)
+    config = proj + '_' + args.tag + '_config'
 
     if args.quiet:
+
         def print(*args, **kwargs):
             "Do nothing"
             pass
@@ -207,6 +228,7 @@ if __name__ == "__main__":
             "Do nothing"
             pass
     else:
+
         def stdout_write(*args, **kwargs):
             "Call sys.stderr.write"
             sys.stdout.write(*args, **kwargs)
@@ -236,7 +258,7 @@ if __name__ == "__main__":
         if args.verbose:
             stdout_write("Check whether Docker is up and running.\n")
         img = subprocess.check_output(['docker', 'images', '-q', args.image])
-    except:
+    except BaseException:
         stderr_write("Docker failed. Please make sure docker was properly " +
                      "installed and has been started.\n")
         sys.exit(-1)
@@ -244,8 +266,8 @@ if __name__ == "__main__":
     if args.pull or not img:
         try:
             if args.verbose:
-                stdout_write("Pulling latest docker image " +
-                             args.image + '.\n')
+                stdout_write("Pulling latest docker image " + args.image +
+                             '.\n')
             err = subprocess.call(["docker", "pull", args.image])
         except BaseException:
             err = -1
@@ -254,9 +276,8 @@ if __name__ == "__main__":
             sys.exit(err)
 
         # Delete dangling image
-        if img and subprocess.check_output(['docker', 'images', '-f',
-                                            'dangling=true',
-                                            '-q']).find(img) >= 0:
+        if img and subprocess.check_output(
+            ['docker', 'images', '-f', 'dangling=true', '-q']).find(img) >= 0:
             subprocess.Popen(["docker", "rmi", "-f", img.decode('utf-8')[:-1]])
 
     docker_user = "ubuntu"
@@ -271,26 +292,29 @@ if __name__ == "__main__":
         except subprocess.CalledProcessError as e:
             stderr_write(e.output.decode('utf-8'))
 
-    volumes = ["-v", pwd + ":" + docker_home + "/shared",
-               "-v", config + ":" + docker_home + "/.config"]
+    volumes = [
+        "-v", pwd + ":" + docker_home + "/shared", "-v",
+        config + ":" + docker_home + "/.config"
+    ]
 
     if os.path.exists(homedir + "/.gnupg"):
-        volumes += ["-v", homedir + "/.gnupg" +
-                    ":" + docker_home + "/.gnupg"]
+        volumes += ["-v", homedir + "/.gnupg" + ":" + docker_home + "/.gnupg"]
 
     # Mount .gitconfig to Docker image
     if os.path.isfile(homedir + "/.gitconfig"):
-        volumes += ["-v", homedir + "/.gitconfig" +
-                    ":" + docker_home + "/.gitconfig_host"]
+        volumes += [
+            "-v",
+            homedir + "/.gitconfig" + ":" + docker_home + "/.gitconfig_host"
+        ]
 
     if args.volume:
         if args.clear:
             try:
                 if args.verbose:
-                    stdout_write(
-                        "Removing old docker volume " + config + ".\n")
-                output = subprocess.check_output(["docker", "volume",
-                                                  "rm", "-f", args.volume])
+                    stdout_write("Removing old docker volume " + config +
+                                 ".\n")
+                output = subprocess.check_output(
+                    ["docker", "volume", "rm", "-f", args.volume])
             except subprocess.CalledProcessError as e:
                 stderr_write(e.output.decode('utf-8'))
 
@@ -311,8 +335,7 @@ if __name__ == "__main__":
     # Generate a container ID
     container = id_generator()
 
-    envs = ["--hostname", container,
-            "--env", "HOST_UID=" + uid]
+    envs = ["--hostname", container, "--env", "HOST_UID=" + uid]
 
     # Find a free port for ssh tunning
     port_ssh = str(find_free_port(2222, 50))
@@ -337,7 +360,8 @@ if __name__ == "__main__":
         # Mac OS X by default does not support X11 forwarding
         # and its DISPLAY environment variable cannot be shared
         envs += ["--env", "DISPLAY=" + get_local_ip() + ":0"]
-        if os.path.exists('/usr/X11/bin/xhost') or os.path.exists('/usr/bin/xhost'):
+        if os.path.exists('/usr/X11/bin/xhost') or os.path.exists(
+                '/usr/bin/xhost'):
             subprocess.check_output(['xhost', '+' + get_local_ip()])
 
     # Start the docker image in the background and pipe the stderr
@@ -366,14 +390,16 @@ if __name__ == "__main__":
         try:
             if wait_for_url:
                 # Wait until the file is not empty
-                while subprocess.check_output(["docker", "exec", container,
-                                                   "test", "-e", docker_home +
-                                                   "/.log/jupyter.log"]):
+                while subprocess.check_output([
+                        "docker", "exec", container, "test", "-e",
+                        docker_home + "/.log/jupyter.log"
+                ]):
                     time.sleep(1)
 
-                p = subprocess.Popen(["docker", "exec", container,
-                                      "tail", "-F",
-                                      docker_home + "/.log/jupyter.log"],
+                p = subprocess.Popen([
+                    "docker", "exec", container, "tail", "-F",
+                    docker_home + "/.log/jupyter.log"
+                ],
                                      stdout=subprocess.PIPE,
                                      stderr=subprocess.PIPE,
                                      universal_newlines=True)
@@ -399,10 +425,12 @@ if __name__ == "__main__":
                               "when you connect for the first time:")
                         print("    ", url)
 
-                        stdout_write("You can also log into the container using the command\n    ssh -X -p " + port_ssh + " " +
-                                     docker_user + "@localhost -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\n" +
-                                     "with an authorized key in " +
-                                     homedir + "/.ssh/authorized_keys.\n")
+                        stdout_write(
+                            "You can also log into the container using the command\n    ssh -X -p "
+                            + port_ssh + " " + docker_user +
+                            "@localhost -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\n"
+                            + "with an authorized key in " + homedir +
+                            "/.ssh/authorized_keys.\n")
 
                         if not args.no_browser:
                             webbrowser.open(url)
@@ -414,10 +442,10 @@ if __name__ == "__main__":
 
             if args.detach:
                 print('Started container ' + container + ' in background.')
-                print('To stop it, use "docker stop ' + container + '".')
+                print('To terminate it, use "docker stop ' + container + '".')
                 sys.exit(0)
 
-            print("Press Ctrl-C to stop the server.")
+            print("Press Ctrl-C to terminate the container.")
             time.sleep(1)
 
             # Wait until the container exits or Ctlr-C is pressed
@@ -425,12 +453,13 @@ if __name__ == "__main__":
                 if args.verbose:
                     stdout_write("Redirecting ~/.log/jupyter.log to stdout.\n")
 
-                subprocess.call(["docker", "exec", container,
-                                 "tail", "-F", "-n", "0",
-                                 docker_home + "/.log/jupyter.log"])
+                subprocess.call([
+                    "docker", "exec", container, "tail", "-F", "-n", "0",
+                    docker_home + "/.log/jupyter.log"
+                ])
             else:
-                subprocess.call(["docker", "exec", container,
-                                 "tail", "-f", "/dev/null"])
+                subprocess.call(
+                    ["docker", "exec", container, "tail", "-f", "/dev/null"])
             sys.exit(0)
 
         except subprocess.CalledProcessError:
@@ -439,18 +468,17 @@ if __name__ == "__main__":
                 if args.verbose:
                     stdout_write(
                         "Check whether docker container is running.\n")
-                if not subprocess.check_output(['docker', 'ps',
-                                                '-q', '-f',
-                                                'name=' + container]):
-                    stdout_write('Docker container ' +
-                                 container + ' is no longer running\n')
+                if not subprocess.check_output(
+                    ['docker', 'ps', '-q', '-f', 'name=' + container]):
+                    stdout_write('Docker container ' + container +
+                                 ' is no longer running\n')
                     sys.exit(-1)
                 else:
                     time.sleep(1)
                     continue
             except subprocess.CalledProcessError:
-                stderr_write('Docker container ' +
-                             container + ' is no longer running\n')
+                stderr_write('Docker container ' + container +
+                             ' is no longer running\n')
                 sys.exit(-1)
             except KeyboardInterrupt:
                 handle_interrupt(container)
