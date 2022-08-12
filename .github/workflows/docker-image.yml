@@ -1,0 +1,36 @@
+name: Build Docker Image and Push to Docker Hub
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Obtain tag name from branch name
+      shell: bash
+      run: echo "##[set-output name=tag;]$(echo ${GITHUB_REF#refs/heads/} | sed 's/^main$/latest/g')"
+      id: extract_tag
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ams562
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+      with:
+        context: .
+        push: true
+        tags: ams562/desktop:${{ steps.extract_tag.outputs.tag }}
+        labels: ${{ steps.meta.outputs.labels }}
