@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Launch a Docker image with Ubuntu and LXDE window manager, and
@@ -7,8 +7,6 @@ It also sets up port forwarding for ssh.
 """
 
 # Author: Xiangmin Jiao <xmjiao@gmail.com>
-
-from __future__ import print_function
 
 import sys
 import subprocess

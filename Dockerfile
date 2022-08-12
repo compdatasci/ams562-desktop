@@ -34,8 +34,8 @@ RUN apt update && \
         clang \
         clang-format \
         swig3.0 \
-        python \
-        python-dev \
+        python3 \
+        python3-dev \
         pandoc \
         libnss3 \
         libdpkg-perl \

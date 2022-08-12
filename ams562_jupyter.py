@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Launch Jupyter Notebook within a Docker notebook image and
