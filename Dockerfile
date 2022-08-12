@@ -39,7 +39,7 @@ RUN apt update && \
         pandoc \
         libnss3 \
         libdpkg-perl \
-        ttf-dejavu \
+        fonts-dejavu-extra \
         debhelper \
         devscripts \
         gnupg \
