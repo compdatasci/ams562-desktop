@@ -67,21 +67,21 @@ RUN export PATH=${MINICONDA_ROOT}/bin:$PATH && \
     conda install jupyter -y && conda install xeus-cling -c conda-forge && \
     conda install -c conda-forge jupyter_latex_envs -y && \
     hash jupyter && \
-    jupyter nbextension install --py --system \	
-         widgetsnbextension && \	
-    jupyter nbextension enable --py --system \	
-         widgetsnbextension && \	
-    jupyter-nbextension install --py --system \	
-        latex_envs && \	
-    jupyter-nbextension enable --py --system \	
-        latex_envs && \	
-    jupyter-nbextension install --system \	
-        https://bitbucket.org/ipre/calico/downloads/calico-spell-check-1.0.zip && \	
-    jupyter-nbextension install --system \	
-        https://bitbucket.org/ipre/calico/downloads/calico-document-tools-1.0.zip && \	
-    jupyter-nbextension install --system \	
-        https://bitbucket.org/ipre/calico/downloads/calico-cell-tools-1.0.zip && \	
-    jupyter-nbextension enable --system \	
+    jupyter nbextension install --py --system \
+         widgetsnbextension && \
+    jupyter nbextension enable --py --system \
+         widgetsnbextension && \
+    jupyter-nbextension install --py --system \
+        latex_envs && \
+    jupyter-nbextension enable --py --system \
+        latex_envs && \
+    jupyter-nbextension install --system \
+        https://bitbucket.org/ipre/calico/downloads/calico-spell-check-1.0.zip && \
+    jupyter-nbextension install --system \
+        https://bitbucket.org/ipre/calico/downloads/calico-document-tools-1.0.zip && \
+    jupyter-nbextension install --system \
+        https://bitbucket.org/ipre/calico/downloads/calico-cell-tools-1.0.zip && \
+    jupyter-nbextension enable --system \
         calico-spell-check && \
     conda clean -a -y
 
