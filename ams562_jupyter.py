@@ -352,10 +352,8 @@ if __name__ == "__main__":
         for d in glob.glob('/dev/nvidia*'):
             devices += ['--device', d + ':' + d]
 
-    # set up X11 forwarding for Mac or Linux if DISPLAY is set
-    if platform.system() != 'Windows' and 'DISPLAY' in os.environ:
-        # Mac OS X by default does not support X11 forwarding
-        # and its DISPLAY environment variable cannot be shared
+    # set up X11 forwarding for Linux if DISPLAY is set
+    if platform.system() == 'Linux' and 'DISPLAY' in os.environ:
         envs += ["--env", "DISPLAY=" + get_local_ip() + ":0"]
         if os.path.exists('/usr/X11/bin/xhost') or os.path.exists(
                 '/usr/bin/xhost'):
@@ -367,15 +365,9 @@ if __name__ == "__main__":
         stderr_write("Error: Could not find a free port.\n")
         sys.exit(-1)
 
-    # Add additional arguments for Darwin on arm64
-    if platform.system() == 'Darwin' and platform.machine() == 'arm64':
-        platform_args = ["--platform", "linux/amd64"]
-    else:
-        platform_args = []
-
     cmd = ["docker", "run", "-d", rmflag, "--name", container,
            "--shm-size", "2g", "-p", port_http + ":" + port_http] + \
-        platform_args + envs + volumes + args.args.split() + \
+        envs + volumes + args.args.split() + \
         ['--security-opt', 'seccomp=unconfined', args.image,
             "jupyter-notebook --no-browser --ip=0.0.0.0 --port " +
             port_http + " " + args.jupyter +
