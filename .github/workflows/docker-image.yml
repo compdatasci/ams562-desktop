@@ -2,11 +2,7 @@ name: Build Docker Image and Push to Docker Hub
 
 on:
   push:
-    branches:
-      - '*'
-  pull_request:
-    branches:
-      - '*'
+    branches: '*'
 
 jobs:
 
