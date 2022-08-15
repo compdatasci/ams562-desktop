@@ -54,7 +54,7 @@ RUN apt update && \
 # install miniconda
 ENV MINICONDA_ROOT=/usr/local/miniconda
 RUN \
-    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
+    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-$(arch).sh \
     -O /tmp/miniconda.sh && \
     bash /tmp/miniconda.sh -b -p ${MINICONDA_ROOT} && \
     rm -f /tmp/miniconda.sh && \
