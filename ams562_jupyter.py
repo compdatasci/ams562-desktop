@@ -367,9 +367,15 @@ if __name__ == "__main__":
         stderr_write("Error: Could not find a free port.\n")
         sys.exit(-1)
 
+    # Add additional arguments for Darwin on arm64
+    if platform.system() == 'Darwin' and platform.machine() == 'arm64':
+        platform_args = ["--platform", "linux/amd64"]
+    else:
+        platform_args = []
+
     cmd = ["docker", "run", "-d", rmflag, "--name", container,
            "--shm-size", "2g", "-p", port_http + ":" + port_http] + \
-        envs + volumes + args.args.split() + \
+        platform_args + envs + volumes + args.args.split() + \
         ['--security-opt', 'seccomp=unconfined', args.image,
             "jupyter-notebook --no-browser --ip=0.0.0.0 --port " +
             port_http + " " + args.jupyter +
