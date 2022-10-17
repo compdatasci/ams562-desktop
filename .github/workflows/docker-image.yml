@@ -16,9 +16,9 @@ jobs:
         shell: bash
         run: |
              if [ -z "${{ secrets.DOCKER_HUB_REPO }}" ]; then
-                 echo "##[set-output name=uname;]${{ secrets.DOCKER_HUB_USERNAME }}"
+                 echo "uname=${{ secrets.DOCKER_HUB_USERNAME }}" >> $GITHUB_OUTPUT
              else
-                 echo "##[set-output name=uname;]${{ secrets.DOCKER_HUB_REPO }}"
+                 echo "uname=${{ secrets.DOCKER_HUB_REPO }}" >> $GITHUB_OUTPUT
              fi
              echo "repo=$(echo ${GITHUB_REPOSITORY} | awk -F / '{print $2}')"  >> $GITHUB_OUTPUT
              echo "tag=$(echo ${GITHUB_REF#refs/heads/} | sed 's/^main$/latest/g')" >> $GITHUB_OUTPUT
