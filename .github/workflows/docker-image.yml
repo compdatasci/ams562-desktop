@@ -20,8 +20,8 @@ jobs:
              else
                  echo "##[set-output name=uname;]${{ secrets.DOCKER_HUB_REPO }}"
              fi
-             echo "##[set-output name=repo;]$(echo ${GITHUB_REPOSITORY} | awk -F / '{print $2}')"
-             echo "##[set-output name=tag;]$(echo ${GITHUB_REF#refs/heads/} | sed 's/^main$/latest/g')"
+             echo "repo=$(echo ${GITHUB_REPOSITORY} | awk -F / '{print $2}')"  >> $GITHUB_OUTPUT
+             echo "tag=$(echo ${GITHUB_REF#refs/heads/} | sed 's/^main$/latest/g')" >> $GITHUB_OUTPUT
         id: extract_tag
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
