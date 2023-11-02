@@ -4,6 +4,10 @@ on:
   pull_request:
     branches: '*'
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build:
     strategy:
@@ -34,7 +38,6 @@ jobs:
           TAG2=$(echo ${{ matrix.platform }} | cut -d/ -f2)
           echo "::set-output name=image::${UNAME}/${REPO}:${TAG}"
           echo "::set-output name=image-tag2::${UNAME}/${REPO}:${TAG}-${TAG2}"
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
