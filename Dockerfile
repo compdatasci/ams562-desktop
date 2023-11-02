@@ -51,21 +51,21 @@ RUN apt update && \
     apt clean -y && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# install miniconda
-ENV MINICONDA_ROOT=/usr/local/miniconda
+# install miniforge
+ENV MINICONDA_ROOT=/usr/local/miniforge
 RUN \
-    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-$(arch).sh \
-    -O /tmp/miniconda.sh && \
-    bash /tmp/miniconda.sh -b -p ${MINICONDA_ROOT} && \
-    rm -f /tmp/miniconda.sh && \
+    wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-$(arch).sh \
+    -O /tmp/miniforge.sh && \
+    bash /tmp/miniforge.sh -b -p ${MINICONDA_ROOT} && \
+    rm -f /tmp/miniforge.sh && \
     touch $DOCKER_HOME/.log/jupyer.log && \
     echo "PATH=${MINICONDA_ROOT}/bin:\$PATH" >> $DOCKER_HOME/.profile && \
     rm -rf /tmp/*
 
 # install jupyter and xeus-cling
 RUN export PATH=${MINICONDA_ROOT}/bin:$PATH && \
-    conda install jupyter -y && conda install xeus-cling -c conda-forge && \
-    conda clean -a -y
+    mamba install xeus-cling -c conda-forge && \
+    mamba clean -a -y
 
 ########################################################
 # Customization for user
