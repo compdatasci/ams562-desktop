@@ -10,7 +10,7 @@ jobs:
       matrix:
         include:
           - platform: linux/amd64
-            runner: [self-hosted,amd64]
+            runner: [self-hosted,x64]
           - platform: linux/arm64
             runner: [self-hosted,arm64]
     runs-on: ${{ matrix.runner }}
