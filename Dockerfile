@@ -53,8 +53,7 @@ RUN apt update && \
 
 # install miniforge
 ENV MINICONDA_ROOT=/usr/local/miniforge
-RUN \
-    wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-$(arch).sh \
+RUN wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-$(arch).sh \
     -O /tmp/miniforge.sh && \
     bash /tmp/miniforge.sh -b -p ${MINICONDA_ROOT} && \
     rm -f /tmp/miniforge.sh && \
@@ -64,8 +63,7 @@ RUN \
 
 # install jupyter and xeus-cling
 RUN export PATH=${MINICONDA_ROOT}/bin:$PATH && \
-    mamba install jupyter scipy matplotlib pandas && \
-    mamba install xeus-cling -c conda-forge && \
+    mamba install -y xeus-cling jupyter scipy matplotlib pandas -c conda-forge && \
     mamba clean -a -y
 
 ########################################################
