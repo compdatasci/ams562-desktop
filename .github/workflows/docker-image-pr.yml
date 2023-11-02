@@ -40,8 +40,8 @@ jobs:
           fi
           TAG=$(echo ${GITHUB_REF#refs/heads/} | sed 's/^main$/latest/g')
           TAG2=$(echo ${{ matrix.platform }} | cut -d/ -f2)
-          echo "::set-output name=image::${UNAME}/${REPO}:${TAG}"
-          echo "::set-output name=image-tag2::${UNAME}/${REPO}:${TAG}-${TAG2}"
+          echo "image=${UNAME}/${REPO}:${TAG}" >> $GITHUB_OUTPUT
+          echo "image-tag2=${UNAME}/${REPO}:${TAG}-${TAG2}" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
