@@ -16,7 +16,7 @@ jobs:
           - platform: linux/amd64
             runner: ubuntu-latest
           - platform: linux/arm64
-            runner: [self-hosted,arm64]
+            runner: ubuntu-latest
     runs-on: ${{ matrix.runner }}
     steps:
       - name:  "add-path"
