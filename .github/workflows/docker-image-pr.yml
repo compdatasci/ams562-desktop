@@ -15,9 +15,12 @@ jobs:
             runner: [self-hosted,arm64]
     runs-on: ${{ matrix.runner }}
     steps:
+      - name:  "add-path"
+        shell: pwsh
+        run: Add-Content $env:GITHUB_PATH "C:\Program Files\Git\bin"
+        if: runner.os == 'Windows'
       - name: Checkout
         uses: actions/checkout@v3
-
       - name: Set Environment Variables
         id: set-vars
         run: |
