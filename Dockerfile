@@ -64,6 +64,7 @@ RUN \
 
 # install jupyter and xeus-cling
 RUN export PATH=${MINICONDA_ROOT}/bin:$PATH && \
+    mamba install jupyter scipy matplotlib pandas && \
     mamba install xeus-cling -c conda-forge && \
     mamba clean -a -y
 
