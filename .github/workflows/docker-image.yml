@@ -28,12 +28,16 @@ jobs:
       - name: Set Environment Variables
         id: set-vars
         run: |
-          if [ -z "${{ secrets.DOCKER_HUB_REPO }}" ]; then
+          if [ -z "${{ secrets.DOCKER_HUB_ORGNAME }}" ]; then
               UNAME=${{ secrets.DOCKER_HUB_USERNAME }}
           else
-              UNAME=${{ secrets.DOCKER_HUB_REPO }}
+              UNAME=${{ secrets.DOCKER_HUB_ORGNAME }}
           fi
-          REPO=$(echo ${GITHUB_REPOSITORY} | awk -F / '{print $2}')
+          if [ -z "${{ secrets.DOCKER_HUB_REPO }}" ]; then
+              REPO=$(echo ${GITHUB_REPOSITORY} | awk -F / '{print $2}')
+          else
+              REPO=${{ secrets.DOCKER_HUB_REPO }}
+          fi
           TAG=$(echo ${GITHUB_REF#refs/heads/} | sed 's/^main$/latest/g')
           TAG2=$(echo ${{ matrix.platform }} | cut -d/ -f2)
           echo "::set-output name=image::${UNAME}/${REPO}:${TAG}"
@@ -68,12 +72,16 @@ jobs:
       - name: Set Environment Variables
         id: set-vars
         run: |
-          if [ -z "${{ secrets.DOCKER_HUB_REPO }}" ]; then
+          if [ -z "${{ secrets.DOCKER_HUB_ORGNAME }}" ]; then
               UNAME=${{ secrets.DOCKER_HUB_USERNAME }}
           else
-              UNAME=${{ secrets.DOCKER_HUB_REPO }}
+              UNAME=${{ secrets.DOCKER_HUB_ORGNAME }}
           fi
-          REPO=$(echo ${GITHUB_REPOSITORY} | awk -F / '{print $2}')
+          if [ -z "${{ secrets.DOCKER_HUB_REPO }}" ]; then
+              REPO=$(echo ${GITHUB_REPOSITORY} | awk -F / '{print $2}')
+          else
+              REPO=${{ secrets.DOCKER_HUB_REPO }}
+          fi
           TAG=$(echo ${GITHUB_REF#refs/heads/} | sed 's/^main$/latest/g')
           echo "::set-output name=image::${UNAME}/${REPO}:${TAG}"
       - name: Login to Docker Hub
