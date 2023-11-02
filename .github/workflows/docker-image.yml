@@ -1,45 +1,85 @@
-name: Docker Build CI
+name: Build and push multi-platform Docker images
 
 on:
   push:
     branches: '*'
 
 jobs:
-
   build:
-    runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-latest
+          - platform: linux/arm64
+            runner: [self-hosted,arm64]
+    runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Obtain repository and tag names
-        shell: bash
+
+      - name: Set Environment Variables
+        id: set-vars
         run: |
-             if [ -z "${{ secrets.DOCKER_HUB_REPO }}" ]; then
-                 echo "uname=${{ secrets.DOCKER_HUB_USERNAME }}" >> $GITHUB_OUTPUT
-             else
-                 echo "uname=${{ secrets.DOCKER_HUB_REPO }}" >> $GITHUB_OUTPUT
-             fi
-             echo "repo=$(echo ${GITHUB_REPOSITORY} | awk -F / '{print $2}')"  >> $GITHUB_OUTPUT
-             echo "tag=$(echo ${GITHUB_REF#refs/heads/} | sed 's/^main$/latest/g')" >> $GITHUB_OUTPUT
-        id: extract_tag
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+          if [ -z "${{ secrets.DOCKER_HUB_REPO }}" ]; then
+              UNAME=${{ secrets.DOCKER_HUB_USERNAME }}
+          else
+              UNAME=${{ secrets.DOCKER_HUB_REPO }}
+          fi
+          REPO=$(echo ${GITHUB_REPOSITORY} | awk -F / '{print $2}')
+          TAG=$(echo ${GITHUB_REF#refs/heads/} | sed 's/^main$/latest/g')
+          TAG2=$(echo ${{ matrix.platform }} | cut -d/ -f2)
+          echo "::set-output name=image::${UNAME}/${REPO}:${TAG}"
+          echo "::set-output name=image-tag2::${UNAME}/${REPO}:${TAG}-${TAG2}"
+
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
+
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ matrix.platform }}
           push: true
-          tags: ams562/desktop:${{ steps.extract_tag.outputs.tag }}
-          cache-from: type=registry,ref=${{ steps.extract_tag.outputs.uname }}/${{ steps.extract_tag.outputs.repo }}:buildcache
-          cache-to: type=registry,ref=${{ steps.extract_tag.outputs.uname }}/${{ steps.extract_tag.outputs.repo }}:buildcache,mode=max
+          tags: ${{ steps.set-vars.outputs.image-tag2 }}
 
+  push-manifest:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Environment Variables
+        id: set-vars
+        run: |
+          if [ -z "${{ secrets.DOCKER_HUB_REPO }}" ]; then
+              UNAME=${{ secrets.DOCKER_HUB_USERNAME }}
+          else
+              UNAME=${{ secrets.DOCKER_HUB_REPO }}
+          fi
+          REPO=$(echo ${GITHUB_REPOSITORY} | awk -F / '{print $2}')
+          TAG=$(echo ${GITHUB_REF#refs/heads/} | sed 's/^main$/latest/g')
+          echo "::set-output name=image::${UNAME}/${REPO}:${TAG}"
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Pull Docker images
+        run: |
+          docker pull ${{ steps.set-vars.outputs.image }}-amd64
+          docker pull ${{ steps.set-vars.outputs.image }}-arm64
+
+      - name: Create and push Docker manifest
+        run: |
+          docker manifest create ${{ steps.set-vars.outputs.image }} \
+            --amend ${{ steps.set-vars.outputs.image }}-amd64 \
+            --amend ${{ steps.set-vars.outputs.image }}-arm64
+          docker manifest push ${{ steps.set-vars.outputs.image }}
