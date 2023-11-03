@@ -365,7 +365,7 @@ if __name__ == "__main__":
         stderr_write("Error: Could not find a free port.\n")
         sys.exit(-1)
 
-    cmd = ["docker", "run", "-d", rmflag, "--name", container,
+    cmd = ["docker", "run", "--platform", "linux/amd64", "-d", rmflag, "--name", container,
            "--shm-size", "2g", "-p", port_http + ":" + port_http] + \
         envs + volumes + args.args.split() + \
         ['--security-opt', 'seccomp=unconfined', args.image,
