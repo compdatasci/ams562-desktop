@@ -4,25 +4,53 @@ on:
   pull_request:
     branches: '*'
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
-
   build:
-
-    runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-latest
+          - platform: linux/arm64
+            runner: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     steps:
+      - name:  "add-path"
+        shell: pwsh
+        run: Add-Content $env:GITHUB_PATH "C:\Program Files\Git\bin"
+        if: runner.os == 'Windows'
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2        
+      - name: Set Environment Variables
+        id: set-vars
+        run: |
+          if [ -z "${{ secrets.DOCKER_HUB_ORGNAME }}" ]; then
+              UNAME=${{ secrets.DOCKER_HUB_USERNAME }}
+          else
+              UNAME=${{ secrets.DOCKER_HUB_ORGNAME }}
+          fi
+          if [ -z "${{ secrets.DOCKER_HUB_REPO }}" ]; then
+              REPO=$(echo ${GITHUB_REPOSITORY} | awk -F / '{print $2}')
+          else
+              REPO=${{ secrets.DOCKER_HUB_REPO }}
+          fi
+          TAG=$(echo ${GITHUB_REF#refs/heads/} | sed 's/^main$/latest/g')
+          TAG2=$(echo ${{ matrix.platform }} | cut -d/ -f2)
+          echo "image=${UNAME}/${REPO}:${TAG}" >> $GITHUB_OUTPUT
+          echo "image-tag2=${UNAME}/${REPO}:${TAG}-${TAG2}" >> $GITHUB_OUTPUT
+
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
+
       - name: Build without push
         uses: docker/build-push-action@v3
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ matrix.platform }}
           push: false
-
-# Reference: https://docs.docker.com/ci-cd/github-actions/
+          tags: ${{ steps.set-vars.outputs.image-tag2 }}
