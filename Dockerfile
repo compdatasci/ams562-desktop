@@ -62,27 +62,9 @@ RUN \
     echo "PATH=${MINICONDA_ROOT}/bin:\$PATH" >> $DOCKER_HOME/.profile && \
     rm -rf /tmp/*
 
-# install jupyter and xeus-cling
+# install jupyter and xeus-cling in the cling environment
 RUN export PATH=${MINICONDA_ROOT}/bin:$PATH && \
-    conda install jupyter -y && conda install xeus-cling -c conda-forge && \
-    conda install -c conda-forge jupyter_latex_envs -y && \
-    hash jupyter && \
-    jupyter nbextension install --py --system \
-         widgetsnbextension && \
-    jupyter nbextension enable --py --system \
-         widgetsnbextension && \
-    jupyter-nbextension install --py --system \
-        latex_envs && \
-    jupyter-nbextension enable --py --system \
-        latex_envs && \
-    jupyter-nbextension install --system \
-        https://bitbucket.org/ipre/calico/downloads/calico-spell-check-1.0.zip && \
-    jupyter-nbextension install --system \
-        https://bitbucket.org/ipre/calico/downloads/calico-document-tools-1.0.zip && \
-    jupyter-nbextension install --system \
-        https://bitbucket.org/ipre/calico/downloads/calico-cell-tools-1.0.zip && \
-    jupyter-nbextension enable --system \
-        calico-spell-check && \
+    conda create -n cling "python>=3.9" jupyterlab xeus-cling gcc_linux-aarch64=9.3.0 -c conda-forge && \
     conda clean -a -y
 
 ########################################################
