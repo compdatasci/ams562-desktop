@@ -13,6 +13,7 @@ USER root
 WORKDIR /tmp
 
 ADD image/home $DOCKER_HOME/
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install system packages
 RUN apt update && \
@@ -39,7 +40,6 @@ RUN apt update && \
         pandoc \
         libnss3 \
         libdpkg-perl \
-        fonts-dejavu-extra \
         debhelper \
         devscripts \
         gnupg \
