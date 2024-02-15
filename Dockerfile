@@ -12,7 +12,7 @@ LABEL maintainer "Qiao Chen <benechiao@gmail.com>"
 USER root
 WORKDIR /tmp
 
-ADD image/home $DOCKER_HOME/
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install system packages
 RUN apt update && \
@@ -39,7 +39,6 @@ RUN apt update && \
         pandoc \
         libnss3 \
         libdpkg-perl \
-        fonts-dejavu-extra \
         debhelper \
         devscripts \
         gnupg \
@@ -62,27 +61,13 @@ RUN \
     echo "PATH=${MINICONDA_ROOT}/bin:\$PATH" >> $DOCKER_HOME/.profile && \
     rm -rf /tmp/*
 
-# install jupyter and xeus-cling
+# install jupyter and xeus-cling in the cling environment
 RUN export PATH=${MINICONDA_ROOT}/bin:$PATH && \
-    conda install jupyter -y && conda install xeus-cling -c conda-forge && \
-    conda install -c conda-forge jupyter_latex_envs -y && \
-    hash jupyter && \
-    jupyter nbextension install --py --system \
-         widgetsnbextension && \
-    jupyter nbextension enable --py --system \
-         widgetsnbextension && \
-    jupyter-nbextension install --py --system \
-        latex_envs && \
-    jupyter-nbextension enable --py --system \
-        latex_envs && \
-    jupyter-nbextension install --system \
-        https://bitbucket.org/ipre/calico/downloads/calico-spell-check-1.0.zip && \
-    jupyter-nbextension install --system \
-        https://bitbucket.org/ipre/calico/downloads/calico-document-tools-1.0.zip && \
-    jupyter-nbextension install --system \
-        https://bitbucket.org/ipre/calico/downloads/calico-cell-tools-1.0.zip && \
-    jupyter-nbextension enable --system \
-        calico-spell-check && \
+    if [ "$(uname -m)" = "aarch64" ]; then \
+        conda install -y "python>=3.9" jupyter jupyterlab xeus-cling gcc_linux-aarch64=9.4.0 -c conda-forge; \
+    else \
+        conda install -y "python>=3.9" jupyter jupyterlab xeus-cling gcc_linux-64=9.4.0 -c conda-forge; \
+    fi && \
     conda clean -a -y
 
 ########################################################
@@ -94,4 +79,5 @@ COPY WELCOME $DOCKER_HOME/WELCOME
 RUN echo "export OMP_NUM_THREADS=\$(nproc)" >> $DOCKER_HOME/.profile && \
     chown -R $DOCKER_USER:$DOCKER_GROUP $DOCKER_HOME
 
+USER root
 WORKDIR $DOCKER_HOME
