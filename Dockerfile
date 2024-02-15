@@ -12,7 +12,6 @@ LABEL maintainer "Qiao Chen <benechiao@gmail.com>"
 USER root
 WORKDIR /tmp
 
-ADD image/home $DOCKER_HOME/
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install system packages
@@ -65,9 +64,9 @@ RUN \
 # install jupyter and xeus-cling in the cling environment
 RUN export PATH=${MINICONDA_ROOT}/bin:$PATH && \
     if [ "$(uname -m)" = "aarch64" ]; then \
-        conda create -n cling "python>=3.9" jupyterlab xeus-cling gcc_linux-aarch64=9.4.0 -c conda-forge; \
+        conda install -y "python>=3.9" jupyterlab xeus-cling gcc_linux-aarch64=9.4.0 -c conda-forge; \
     else \
-        conda create -n cling "python>=3.9" jupyterlab xeus-cling gcc_linux-64=9.4.0 -c conda-forge; \
+        conda install -y "python>=3.9" jupyterlab xeus-cling gcc_linux-64=9.4.0 -c conda-forge; \
     fi && \
     conda clean -a -y
 
@@ -80,4 +79,5 @@ COPY WELCOME $DOCKER_HOME/WELCOME
 RUN echo "export OMP_NUM_THREADS=\$(nproc)" >> $DOCKER_HOME/.profile && \
     chown -R $DOCKER_USER:$DOCKER_GROUP $DOCKER_HOME
 
+USER root
 WORKDIR $DOCKER_HOME
