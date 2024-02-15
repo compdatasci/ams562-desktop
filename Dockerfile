@@ -64,9 +64,9 @@ RUN \
 # install jupyter and xeus-cling in the cling environment
 RUN export PATH=${MINICONDA_ROOT}/bin:$PATH && \
     if [ "$(uname -m)" = "aarch64" ]; then \
-        conda install -y "python>=3.9" jupyterlab xeus-cling gcc_linux-aarch64=9.4.0 -c conda-forge; \
+        conda install -y "python>=3.9" jupyter jupyterlab xeus-cling gcc_linux-aarch64=9.4.0 -c conda-forge; \
     else \
-        conda install -y "python>=3.9" jupyterlab xeus-cling gcc_linux-64=9.4.0 -c conda-forge; \
+        conda install -y "python>=3.9" jupyter jupyterlab xeus-cling gcc_linux-64=9.4.0 -c conda-forge; \
     fi && \
     conda clean -a -y
 
