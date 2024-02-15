@@ -11,6 +11,7 @@ import sys
 import subprocess
 import time
 import os
+import signal
 
 owner = os.path.basename(sys.argv[0]).split("_")[0]
 proj = os.path.basename(sys.argv[0]).split("_")[0]
@@ -215,20 +216,30 @@ def find_free_port(port, retries):
     return ""
 
 
-def handle_interrupt(container):
-    """Handle keyboard interrupt"""
-    try:
-        print("Press Ctrl-C again to terminate the container: ")
-        time.sleep(5)
-        print("Invalid response. Resuming...")
-    except KeyboardInterrupt:
-        print("*** Stopping the server.")
+def stop_container(container):
+    """Function to stop the container immediately when SIGINT is received."""
+    print("*** Stopping the container " + container)
+    if platform.system() == "Windows":
+        subprocess.check_output(["docker", "stop", container])
+    else:
         subprocess.Popen(
             ["docker", "exec", container, "killall", "my_init"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        sys.exit(0)
+    sys.exit(0)
+
+
+def handle_interrupt(container):
+    """Handle keyboard interrupt"""
+    # Set SIGINT to call stop_container directly next time
+    signal.signal(signal.SIGINT, lambda sig, frame: stop_container(container))
+
+    print("Press Ctrl-C again to terminate the container: ")
+    time.sleep(5)
+    print("Invalid response. Resuming...")
+    # After the wait, go back to the original handler
+    signal.signal(signal.SIGINT, signal_handler)
 
 
 if __name__ == "__main__":
@@ -443,138 +454,113 @@ if __name__ == "__main__":
 
     wait_for_url = True
 
-    # Wait for user to press Ctrl-C
-    while True:
-        try:
-            if wait_for_url:
-                # Wait until the file is not empty
-                while subprocess.check_output(
-                    [
-                        "docker",
-                        "exec",
-                        container,
-                        "test",
-                        "-e",
-                        docker_home + "/.log/jupyter.log",
-                    ]
-                ):
-                    time.sleep(1)
+    # Set the signal handler for SIGINT
+    signal.signal(signal.SIGINT, lambda sig, frame: handle_interrupt(container))
 
-                p = subprocess.Popen(
-                    [
-                        "docker",
-                        "exec",
-                        container,
-                        "tail",
-                        "-F",
-                        docker_home + "/.log/jupyter.log",
-                    ],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    universal_newlines=True,
-                )
+    try:
+        if wait_for_url:
+            # Wait until the file is not empty
+            while subprocess.check_output(
+                [
+                    "docker",
+                    "exec",
+                    container,
+                    "test",
+                    "-e",
+                    docker_home + "/.log/jupyter.log",
+                ]
+            ):
+                time.sleep(1)
 
-                # Monitor the stdout to extract the URL
-                for stdout_line in iter(p.stdout.readline, ""):
-                    if args.verbose:
-                        stdout_write(stdout_line)
+            p = subprocess.Popen(
+                [
+                    "docker",
+                    "exec",
+                    container,
+                    "tail",
+                    "-F",
+                    docker_home + "/.log/jupyter.log",
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                universal_newlines=True,
+            )
 
-                    m = re.search("http://[^:]+:", stdout_line)
-
-                    if m:
-                        # Open browser if found URL
-                        if not args.notebook:
-                            url = "http://localhost:" + stdout_line[m.end() : -1]
-                        else:
-                            url = (
-                                "http://localhost:"
-                                + port_http
-                                + "/notebooks/"
-                                + args.notebook
-                                + stdout_line[stdout_line.find("?token=") : -1]
-                            )
-
-                        print(
-                            "Copy/paste this URL into your browser "
-                            + "when you connect for the first time:"
-                        )
-                        print("    ", url)
-
-                        stdout_write(
-                            "You can also log into the container using the command\n    ssh -X -p "
-                            + port_ssh
-                            + " "
-                            + docker_user
-                            + "@localhost -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\n"
-                            + "with an authorized key in "
-                            + homedir
-                            + "/.ssh/authorized_keys.\n"
-                        )
-
-                        if not args.no_browser:
-                            webbrowser.open(url)
-
-                        p.stdout.close()
-                        p.terminate()
-                        wait_for_url = False
-                        break
-
-            if args.detach:
-                print("Started container " + container + " in background.")
-                print('To terminate it, use "docker stop ' + container + '".')
-                sys.exit(0)
-
-            print("Press Ctrl-C to terminate the container.")
-            time.sleep(1)
-
-            # Wait until the container exits or Ctlr-C is pressed
-            if not args.quiet:
+            # Monitor the stdout to extract the URL
+            for stdout_line in iter(p.stdout.readline, ""):
                 if args.verbose:
-                    stdout_write("Redirecting ~/.log/jupyter.log to stdout.\n")
+                    stdout_write(stdout_line)
 
-                subprocess.call(
-                    [
-                        "docker",
-                        "exec",
-                        container,
-                        "tail",
-                        "-F",
-                        "-n",
-                        "0",
-                        docker_home + "/.log/jupyter.log",
-                    ]
-                )
-            else:
-                subprocess.call(
-                    ["docker", "exec", container, "tail", "-f", "/dev/null"]
-                )
+                m = re.search("http://[^:]+:", stdout_line)
+
+                if m:
+                    # Open browser if found URL
+                    if not args.notebook:
+                        url = "http://localhost:" + stdout_line[m.end() : -1]
+                    else:
+                        url = (
+                            "http://localhost:"
+                            + port_http
+                            + "/notebooks/"
+                            + args.notebook
+                            + stdout_line[stdout_line.find("?token=") : -1]
+                        )
+
+                    print(
+                        "Copy/paste this URL into your browser "
+                        + "when you connect for the first time:"
+                    )
+                    print("    ", url)
+
+                    stdout_write(
+                        "You can also log into the container using the command\n    ssh -X -p "
+                        + port_ssh
+                        + " "
+                        + docker_user
+                        + "@localhost -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\n"
+                        + "with an authorized key in "
+                        + homedir
+                        + "/.ssh/authorized_keys.\n"
+                    )
+
+                    if not args.no_browser:
+                        webbrowser.open(url)
+
+                    p.stdout.close()
+                    p.terminate()
+                    wait_for_url = False
+                    break
+
+        if args.detach:
+            print("Started container " + container + " in background.")
+            print('To terminate it, use "docker stop ' + container + '".')
             sys.exit(0)
 
-        except subprocess.CalledProcessError:
-            try:
-                # If Docker process no long exists, exit
-                if args.verbose:
-                    stdout_write("Check whether docker container is running.\n")
-                if not subprocess.check_output(
-                    ["docker", "ps", "-q", "-f", "name=" + container]
-                ):
-                    stdout_write(
-                        "Docker container " + container + " is no longer running\n"
-                    )
-                    sys.exit(-1)
-                else:
-                    time.sleep(1)
-                    continue
-            except subprocess.CalledProcessError:
-                stderr_write(
-                    "Docker container " + container + " is no longer running\n"
-                )
-                sys.exit(-1)
-            except KeyboardInterrupt:
-                handle_interrupt(container)
+        print("Press Ctrl-C to terminate the container.")
+        time.sleep(1)
 
-            continue
-        except KeyboardInterrupt:
-            handle_interrupt(container)
-        except OSError:
-            sys.exit(-1)
+        # Wait until the container exits or Ctlr-C is pressed
+        if not args.quiet:
+            if args.verbose:
+                stdout_write("Redirecting ~/.log/jupyter.log to stdout.\n")
+
+            subprocess.call(
+                [
+                    "docker",
+                    "exec",
+                    container,
+                    "tail",
+                    "-F",
+                    "-n",
+                    "0",
+                    docker_home + "/.log/jupyter.log",
+                ]
+            )
+        else:
+            subprocess.call(["docker", "exec", container, "tail", "-f", "/dev/null"])
+        sys.exit(0)
+    except subprocess.CalledProcessError:
+        stderr_write("Docker container " + container + " is no longer running\n")
+        sys.exit(-1)
+    except OSError:
+        sys.exit(-1)
