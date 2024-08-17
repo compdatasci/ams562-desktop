@@ -57,18 +57,21 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          platforms: ${{ matrix.platform }}
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.set-vars.outputs.image-tag2 }}
+          cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:cache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO }}:cache,mode=max
 
   push-manifest:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name:  "add-path"
+      - name: "add-path"
         shell: pwsh
         run: Add-Content $env:GITHUB_PATH "C:\Program Files\Git\bin"
         if: runner.os == 'Windows'
+
       - name: Set Environment Variables
         id: set-vars
         run: |
@@ -91,10 +94,14 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Pull Docker images
+      - name: Pull Docker images with retries
         run: |
-          docker pull ${{ steps.set-vars.outputs.image }}-amd64
-          docker pull ${{ steps.set-vars.outputs.image }}-arm64
+          for i in {1..5}; do
+            docker pull ${{ steps.set-vars.outputs.image }}-amd64 && break || sleep 15;
+          done
+          for i in {1..5}; do
+            docker pull ${{ steps.set-vars.outputs.image }}-arm64 && break || sleep 15;
+          done
 
       - name: Create and push Docker manifest
         run: |
