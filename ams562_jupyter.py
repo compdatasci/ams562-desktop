@@ -232,6 +232,9 @@ def stop_container(container):
 
 def handle_interrupt(container):
     """Handle keyboard interrupt"""
+    # Retrieve the original SIGINT handler
+    original_handler = signal.getsignal(signal.SIGINT)
+
     # Set SIGINT to call stop_container directly next time
     signal.signal(signal.SIGINT, lambda sig, frame: stop_container(container))
 
@@ -239,7 +242,7 @@ def handle_interrupt(container):
     time.sleep(5)
     print("Invalid response. Resuming...")
     # After the wait, go back to the original handler
-    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGINT, original_handler)
 
 
 if __name__ == "__main__":
@@ -451,6 +454,7 @@ if __name__ == "__main__":
         stdout_write(" ".join(cmd[:-1]) + ' "' + cmd[-1] + '"\n')
 
     subprocess.call(cmd)
+    time.sleep(1)
 
     wait_for_url = True
 
