@@ -24,7 +24,7 @@ jobs:
         run: Add-Content $env:GITHUB_PATH "C:\Program Files\Git\bin"
         if: runner.os == 'Windows'
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set Environment Variables
         id: set-vars
         run: |
@@ -46,7 +46,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build without push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile

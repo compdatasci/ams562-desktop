@@ -7,7 +7,7 @@
 # Qiao Chen <benechiao@gmail.com>
 
 FROM x11vnc/vscode-desktop:latest
-LABEL maintainer "Qiao Chen <benechiao@gmail.com>"
+LABEL maintainer="Qiao Chen <benechiao@gmail.com>"
 
 USER root
 WORKDIR /tmp
