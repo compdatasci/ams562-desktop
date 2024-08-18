@@ -16,7 +16,7 @@ jobs:
           - platform: linux/amd64
             runner: ubuntu-latest
           - platform: linux/arm64
-            runner: [self-hosted, macOS, ARM64]
+            runner: ubuntu-latest
     runs-on: ${{ matrix.runner }}
     steps:
       - name:  "add-path"
@@ -63,7 +63,7 @@ jobs:
 
   push-manifest:
     needs: build
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: "add-path"
         shell: pwsh
@@ -95,8 +95,9 @@ jobs:
       - name: Pull Docker images
         run: |
           docker pull ${{ steps.set-vars.outputs.image }}-amd64
-          docker pull ${{ steps.set-vars.outputs.image }}-arm64
-
+          for i in {1..5}; do
+              docker pull ${{ steps.set-vars.outputs.image }}-arm64 && break || sleep 5;
+          done
       - name: Create and push Docker manifest
         run: |
           docker manifest create ${{ steps.set-vars.outputs.image }} \
