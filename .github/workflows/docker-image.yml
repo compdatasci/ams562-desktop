@@ -16,7 +16,7 @@ jobs:
           - platform: linux/amd64
             runner: ubuntu-latest
           - platform: linux/arm64
-            runner: ubuntu-latest
+            runner: [self-hosted, macOS, ARM64]
     runs-on: ${{ matrix.runner }}
     steps:
       - name:  "add-path"
@@ -63,7 +63,7 @@ jobs:
 
   push-manifest:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: "add-path"
         shell: pwsh
