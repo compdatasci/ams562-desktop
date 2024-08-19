@@ -53,7 +53,7 @@ jobs:
 
       - name: Build and push platform-specific image
         run: |
-          docker build -t ${{ steps.set-vars.outputs.image-tag2 }} .
+          docker build --platform ${{ matrix.platform }} -t ${{ steps.set-vars.outputs.image-tag2 }} .
           docker push ${{ steps.set-vars.outputs.image-tag2 }}
 
   push-manifest:
