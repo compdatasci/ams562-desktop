@@ -93,8 +93,8 @@ jobs:
 
       - name: Pull Docker images
         run: |
-          docker pull ${{ steps.set-vars.outputs.image }}-amd64
-          docker pull ${{ steps.set-vars.outputs.image }}-arm64
+          docker pull --platform linux/amd64 ${{ steps.set-vars.outputs.image }}-amd64
+          docker pull --platform linux/arm64 ${{ steps.set-vars.outputs.image }}-arm64
 
       - name: Create and push Docker manifest
         run: |
