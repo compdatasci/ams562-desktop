@@ -10,21 +10,11 @@ defaults:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        include:
-          - platform: linux/amd64
-            runner: ubuntu-latest
-          - platform: linux/arm64
-            runner: ubuntu-latest
-    runs-on: ${{ matrix.runner }}
+    runs-on: ubuntu-latest
     steps:
-      - name:  "add-path"
-        shell: pwsh
-        run: Add-Content $env:GITHUB_PATH "C:\Program Files\Git\bin"
-        if: runner.os == 'Windows'
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
       - name: Set Environment Variables
         id: set-vars
         run: |
@@ -39,12 +29,10 @@ jobs:
               REPO=${{ secrets.DOCKER_HUB_REPO }}
           fi
           TAG=$(echo ${GITHUB_REF#refs/heads/} | sed 's/^main$/latest/g')
-          TAG2=$(echo ${{ matrix.platform }} | cut -d/ -f2)
           echo "image=${UNAME}/${REPO}:${TAG}" >> $GITHUB_OUTPUT
-          echo "image-tag2=${UNAME}/${REPO}:${TAG}-${TAG2}" >> $GITHUB_OUTPUT
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
@@ -52,53 +40,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and push
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          file: ./Dockerfile
-          platforms: ${{ matrix.platform }}
-          push: true
-          tags: ${{ steps.set-vars.outputs.image-tag2 }}
-
-  push-manifest:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name:  "add-path"
-        shell: pwsh
-        run: Add-Content $env:GITHUB_PATH "C:\Program Files\Git\bin"
-        if: runner.os == 'Windows'
-      - name: Set Environment Variables
-        id: set-vars
+      - name: Build and push multi-platform image
         run: |
-          if [ -z "${{ secrets.DOCKER_HUB_ORGNAME }}" ]; then
-              UNAME=${{ secrets.DOCKER_HUB_USERNAME }}
-          else
-              UNAME=${{ secrets.DOCKER_HUB_ORGNAME }}
-          fi
-          if [ -z "${{ secrets.DOCKER_HUB_REPO }}" ]; then
-              REPO=$(echo ${GITHUB_REPOSITORY} | awk -F / '{print $2}')
-          else
-              REPO=${{ secrets.DOCKER_HUB_REPO }}
-          fi
-          TAG=$(echo ${GITHUB_REF#refs/heads/} | sed 's/^main$/latest/g')
-          echo "image=${UNAME}/${REPO}:${TAG}" >> $GITHUB_OUTPUT
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
-      - name: Pull Docker images
-        run: |
-          docker pull --platform linux/amd64 ${{ steps.set-vars.outputs.image }}-amd64
-          docker pull --platform linux/arm64 ${{ steps.set-vars.outputs.image }}-arm64
-
-      - name: Create and push Docker manifest
-        run: |
-          docker manifest create ${{ steps.set-vars.outputs.image }} \
-            --amend ${{ steps.set-vars.outputs.image }}-amd64 \
-            --amend ${{ steps.set-vars.outputs.image }}-arm64
-          docker manifest push ${{ steps.set-vars.outputs.image }}
+          docker buildx build --platform linux/amd64,linux/arm64 \
+            --push -t ${{ steps.set-vars.outputs.image }} .
