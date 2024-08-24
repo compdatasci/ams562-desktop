@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Launch Jupyter Notebook (or Jupyter Lab) within a Docker image and
-automatically open up the URL in the default web browser. It also
+Launch Jupyter Lab within a Docker image and automatically
+open up the URL in the default web browser. It also
 sets up port forwarding for ssh and X11 forwarding.
 """
 
@@ -136,14 +136,6 @@ def parse_args(description):
         help='Additional arguments for the "docker run" command. '
         + "Useful for specifying additional resources or environment variables.",
         default="",
-    )
-
-    parser.add_argument(
-        "-l",
-        "--lab",
-        help="Start Jupyter Lab instead of Jupyter Notebook.",
-        action="store_true",
-        default=False,
     )
 
     parser.add_argument(
@@ -438,7 +430,7 @@ if __name__ == "__main__":
             args.image,
             (
                 "jupyter "
-                + ("lab" if args.lab else "notebook")
+                + "lab"
                 + " --no-browser --ip=0.0.0.0 --port "
                 + port_http
                 + " "
@@ -505,7 +497,7 @@ if __name__ == "__main__":
                         url = (
                             "http://localhost:"
                             + port_http
-                            + "/notebooks/"
+                            + "/lab/tree/"
                             + args.notebook
                             + stdout_line[stdout_line.find("?token=") : -1]
                         )

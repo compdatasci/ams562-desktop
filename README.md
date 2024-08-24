@@ -23,7 +23,7 @@ Download Docker Desktop for free at https://docs.docker.com/get-docker/ and then
 2. For security reasons, it is recommended that you do not use Docker in the Administrator account, even if you are the sole user on the computer.
 
 **Notes for Mac Users**
-1. Docker Desktop supports only MacOS 10.15 or newer. The Docker image for AMS 562 supports both Intel chips and Apple M1 chips natively. 
+1. Docker Desktop supports only MacOS 10.15 or newer. The Docker image for AMS 562 supports both Intel chips and Apple M1 chips natively.
 Please make sure that you install Docker Desktop for Mac that is native to your computer's CPU.
 2. By default, Docker uses half the number of processors and 2GB of memory on Mac. If you want to run large jobs, you can increase the amount of memory or the number of cores dedicated to Docker. Just click on the Docker icon in the system tray, select `Preferences` and then select the `Advanced` tab to adjust the settings.
 
@@ -60,7 +60,7 @@ After downloading the script, you can start a desktop environment using the comm
 ```
 python3 ams562_desktop.py -p
 ```
-or start a Jupyter Notebook with C++ support using the command
+or start Jupyter Lab C++ support for xeus-cling using the command
 ```
 python3 ams562_jupyter.py -p
 ```
@@ -71,7 +71,7 @@ For additional command-line options, use the command
 ```
 python3 ams562_desktop.py -h
 ```
-or 
+or
 ```
 python3 ams562_jupyter.py -h
 ```
@@ -81,7 +81,7 @@ After you have download the Docker image using the `curl` and `python` commands 
 ```
 python3 ams562_desktop.py
 ```
-or 
+or
 ```
 python3 ams562_jupyter.py
 ```
