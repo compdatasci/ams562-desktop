@@ -36,6 +36,10 @@ RUN apt update && \
         swig3.0 \
         python3 \
         python3-dev \
+        python3-scipy \
+        python3-matplotlib \
+        python3-pybind11 \
+        libboost-all-dev \
         pandoc \
         libnss3 \
         libdpkg-perl \
