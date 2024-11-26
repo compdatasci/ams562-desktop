@@ -21,7 +21,6 @@ RUN apt update && \
         doxygen \
         git \
         gdb \
-        ddd \
         valgrind \
         electric-fence \
         libeigen3-dev \
@@ -30,12 +29,19 @@ RUN apt update && \
         libopenmpi-dev \
         openmpi-bin \
         libomp-dev \
+        libomp5 \
         meld \
         clang \
         clang-format \
         swig3.0 \
         python3 \
         python3-dev \
+        python3-scipy \
+        python3-matplotlib \
+        python3-pybind11 \
+        libboost-dev \
+        libsuitesparse-dev \
+        libgtest-dev \
         pandoc \
         libnss3 \
         libdpkg-perl \
@@ -45,7 +51,6 @@ RUN apt update && \
         uuid-dev \
         libuuid1 \
         uuid-runtime \
-        libboost-all-dev \
         && \
     apt clean -y && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
